@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"loan_service/locales"
+	"loan_service/middleware"
 	"loan_service/models"
 	"loan_service/public"
 
@@ -66,6 +67,48 @@ func App() *buffalo.App {
 		app.Use(translations())
 
 		app.GET("/", HomeHandler)
+
+		// API Group with authentication
+		api := app.Group("/api/v1")
+		api.Use(middleware.AuthMiddleware)
+
+		// Borrower routes
+		api.GET("/borrowers", BorrowersList)
+		api.GET("/borrowers/{id}", BorrowersShow)
+		api.POST("/borrowers", BorrowersCreate)
+		api.PUT("/borrowers/{id}", BorrowersUpdate)
+		api.DELETE("/borrowers/{id}", BorrowersDelete)
+
+		// Investor routes
+		api.GET("/investors", InvestorsList)
+		api.GET("/investors/{id}", InvestorsShow)
+		api.POST("/investors", InvestorsCreate)
+		api.PUT("/investors/{id}", InvestorsUpdate)
+		api.DELETE("/investors/{id}", InvestorsDelete)
+
+		// Employee routes
+		api.GET("/employees", EmployeesList)
+		api.GET("/employees/{id}", EmployeesShow)
+		api.POST("/employees", EmployeesCreate)
+		api.PUT("/employees/{id}", EmployeesUpdate)
+		api.DELETE("/employees/{id}", EmployeesDelete)
+
+		api.GET("/loans", LoansList)
+		api.GET("/loans/{id}", LoansShow)
+		api.POST("/loans", LoansCreate)
+		api.PUT("/loans/{id}/approve", LoansApprove)
+		api.PUT("/loans/{id}/disburse", LoansDisburse)
+
+		api.POST("/loans/{id}/investments", InvestmentsCreate)
+		api.GET("/loans/{id}/investments", InvestmentsList)
+		api.GET("/investments/{id}", InvestmentsShow)
+
+		api.POST("/loans/{id}/documents", DocumentsCreate)
+		api.GET("/loans/{id}/documents", DocumentsList)
+
+		// API Documentation
+		app.GET("/docs", DocsHandler)
+		app.ServeFiles("/docs/", DocsFS())
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

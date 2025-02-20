@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Investment Confirmation</title>
+</head>
+<body>
+    <h2>Dear {{.RecipientName}},</h2>
+    <p>Your investment of ${{.InvestAmount}} in loan #{{.LoanID}} has been confirmed.</p>
+    <p>Loan Details:</p>
+    <ul>
+        <li>Principal Amount: ${{.LoanAmount}}</li>
+        <li>Expected Return: {{.ROI}}%</li>
+    </ul>
+    <p>Best regards,<br>Loan Service Team</p>
+</body>
+</html> 

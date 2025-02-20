@@ -2,10 +2,18 @@ package models
 
 import (
 	"log"
+	"time"
 
 	"github.com/gobuffalo/envy"
 	"github.com/gobuffalo/pop/v6"
 )
+
+// Model base struct for all models
+type Model struct {
+	ID        int64     `json:"id" db:"id"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+}
 
 // DB is a connection to your database to be used
 // throughout your application.

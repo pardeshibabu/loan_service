@@ -27,5 +27,6 @@ func init() {
 			// forms.FormKey:     forms.Form,
 			// forms.FormForKey:  forms.FormFor,
 		},
+		DefaultContentType: "application/json",
 	})
 }

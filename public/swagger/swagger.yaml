@@ -1,0 +1,445 @@
+swagger: "2.0"
+info:
+  title: Loan Service API
+  description: API for managing loans, investors, borrowers and investments
+  version: 1.0.0
+  contact:
+    email: support@loanservice.com
+basePath: /api/v1
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: 'JWT token, prefixed with Bearer: Bearer <token>'
+
+paths:
+  /investors:
+    get:
+      tags:
+        - investors
+      summary: List all investors
+      parameters:
+        - name: q
+          in: query
+          type: string
+          description: Search query
+        - name: kyc_status
+          in: query
+          type: string
+          enum: [pending, approved, rejected]
+        - name: page
+          in: query
+          type: integer
+        - name: per_page
+          in: query
+          type: integer
+      responses:
+        200:
+          description: List of investors
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Investor'
+    post:
+      tags:
+        - investors
+      summary: Create new investor
+      parameters:
+        - name: investor
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InvestorCreate'
+      responses:
+        201:
+          description: Investor created
+          schema:
+            $ref: '#/definitions/Investor'
+
+  /investors/{id}/kyc:
+    put:
+      tags:
+        - investors
+      summary: Update investor KYC status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+        - name: kyc
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/KYCUpdate'
+      responses:
+        200:
+          description: KYC status updated
+          schema:
+            $ref: '#/definitions/Investor'
+
+  /borrowers:
+    get:
+      tags:
+        - borrowers
+      summary: List all borrowers
+      parameters:
+        - name: q
+          in: query
+          type: string
+          description: Search query
+        - name: page
+          in: query
+          type: integer
+        - name: per_page
+          in: query
+          type: integer
+      responses:
+        200:
+          description: List of borrowers
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Borrower'
+
+  /loans:
+    get:
+      tags:
+        - loans
+      summary: List all loans
+      parameters:
+        - name: status
+          in: query
+          type: string
+          enum: [pending, approved, disbursed]
+        - name: page
+          in: query
+          type: integer
+      responses:
+        200:
+          description: List of loans
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Loan'
+    post:
+      tags:
+        - loans
+      summary: Create new loan
+      parameters:
+        - name: loan
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoanCreate'
+      responses:
+        201:
+          description: Loan created
+          schema:
+            $ref: '#/definitions/Loan'
+
+  /loans/{id}/approve:
+    put:
+      tags:
+        - loans
+      summary: Approve a loan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Loan approved
+          schema:
+            $ref: '#/definitions/Loan'
+
+  /loans/{id}/investments:
+    get:
+      tags:
+        - investments
+      summary: List investments for a loan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: List of investments
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Investment'
+    post:
+      tags:
+        - investments
+      summary: Create new investment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+        - name: investment
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InvestmentCreate'
+      responses:
+        201:
+          description: Investment created
+          schema:
+            $ref: '#/definitions/Investment'
+
+  /investors/{id}/investments/summary:
+    get:
+      tags:
+        - investments
+      summary: Get investment summary for investor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Investment summary
+          schema:
+            $ref: '#/definitions/InvestmentSummary'
+
+  /loans/{id}/documents:
+    get:
+      tags:
+        - documents
+      summary: List documents for a loan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: List of documents
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Document'
+    post:
+      tags:
+        - documents
+      summary: Upload document for loan
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+        - name: file
+          in: formData
+          type: file
+          required: true
+        - name: type
+          in: formData
+          type: string
+          enum: [agreement, kyc, other]
+          required: true
+      responses:
+        201:
+          description: Document uploaded
+          schema:
+            $ref: '#/definitions/Document'
+
+definitions:
+  Investor:
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      kyc_status:
+        type: string
+        enum: [pending, approved, rejected]
+      kyc_documents:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+
+  InvestorCreate:
+    type: object
+    required:
+      - first_name
+      - last_name
+      - email
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+
+  KYCUpdate:
+    type: object
+    required:
+      - status
+      - reviewer_id
+    properties:
+      status:
+        type: string
+        enum: [pending, approved, rejected]
+      documents:
+        type: array
+        items:
+          type: string
+      reviewer_id:
+        type: integer
+      comments:
+        type: string
+
+  Borrower:
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      address:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+
+  Loan:
+    type: object
+    properties:
+      id:
+        type: integer
+      borrower_id:
+        type: integer
+      principal_amount:
+        type: number
+        format: float
+      roi:
+        type: number
+        format: float
+      status:
+        type: string
+        enum: [pending, approved, disbursed]
+      field_officer_id:
+        type: integer
+      field_validator_id:
+        type: integer
+      created_at:
+        type: string
+        format: date-time
+
+  LoanCreate:
+    type: object
+    required:
+      - borrower_id
+      - principal_amount
+      - roi
+    properties:
+      borrower_id:
+        type: integer
+      principal_amount:
+        type: number
+        format: float
+      roi:
+        type: number
+        format: float
+      field_officer_id:
+        type: integer
+
+  Investment:
+    type: object
+    properties:
+      id:
+        type: integer
+      loan_id:
+        type: integer
+      investor_id:
+        type: integer
+      amount:
+        type: number
+        format: float
+      status:
+        type: string
+        enum: [pending, active, completed]
+      created_at:
+        type: string
+        format: date-time
+
+  InvestmentCreate:
+    type: object
+    required:
+      - amount
+    properties:
+      amount:
+        type: number
+        format: float
+
+  InvestmentSummary:
+    type: object
+    properties:
+      total_invested:
+        type: number
+        format: float
+      active_investments:
+        type: integer
+      total_returns:
+        type: number
+        format: float
+      investments_by_status:
+        type: object
+        additionalProperties:
+          type: number
+          format: float
+      recent_investments:
+        type: array
+        items:
+          $ref: '#/definitions/Investment'
+
+  Document:
+    type: object
+    properties:
+      id:
+        type: integer
+      loan_id:
+        type: integer
+      type:
+        type: string
+        enum: [agreement, kyc, other]
+      file_name:
+        type: string
+      file_url:
+        type: string
+      uploaded_by:
+        type: integer
+      created_at:
+        type: string
+        format: date-time 

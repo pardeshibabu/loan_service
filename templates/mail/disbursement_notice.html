@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loan Disbursement Notice</title>
+</head>
+<body>
+    <h2>Dear {{.RecipientName}},</h2>
+    <p>The loan #{{.LoanID}} in which you invested ${{.InvestAmount}} has been disbursed.</p>
+    <p>You can view the signed agreement here: <a href="{{.DocumentURL}}">View Agreement</a></p>
+    <p>Best regards,<br>Loan Service Team</p>
+</body>
+</html> 

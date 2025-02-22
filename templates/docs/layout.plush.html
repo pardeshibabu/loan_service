@@ -395,9 +395,8 @@
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/borrowers" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json"</code></pre>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/borrowers' \
+                            --header 'Cookie: _loan_service_session=MTc0MDI1Mjg4OHxEWDhFQVFMX2dBQUJFQUVRQUFCYV80QUFBZ1p6ZEhKcGJtY01DUUFIWDJac1lYTm9Yd2RiWFhWcGJuUTRDZ1FBQW50OUJuTjBjbWx1Wnd3T0FBeHlaWEYxWlhOMGIzSmZhV1FHYzNSeWFXNW5EQllBRkRBM01UZ3dZek15WVdSaE5qZ3lPR1UxTXpabXxcCe4rJXlOkswalpCBkYy5qGYPr81GfiVjz02ku4LfSg=='</code></pre>
                     </div>
                 </div>
 
@@ -405,14 +404,12 @@
                 <div class="endpoint-container">
                     <div class="endpoint">
                         <span class="method get">GET</span>
-                        <span class="path">/api/v1/borrowers/{id}</span>
+                        <span class="path">/api/v1/borrowers/?search=1&field=id</span>
                         <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/borrowers/123" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json"</code></pre>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/borrowers?search=1&field=id'</code></pre>
                     </div>
                 </div>
 
@@ -856,188 +853,201 @@
             </div>
 
             <div class="docs-section" id="loan-lifecycle">
-                <h1>Step by Step Guide: How to Process a Loan</h1>
+                <h1>Complete Loan Processing Guide</h1>
                 
                 <div class="guide-section">
                     <h2>Prerequisites</h2>
                     <div class="guide-box">
                         <p>Before starting, make sure you have:</p>
                         <ul>
-                            <li>Your API key for authentication</li>
-                            <li>Borrower's personal information</li>
-                            <li>Required documents ready to upload</li>
+                            <li>Access to the API</li>
+                            <li>All required documents ready</li>
+                            <li>Employee credentials for field officers/validators</li>
                         </ul>
                     </div>
 
-                    <h2>Phase 1: Initial Setup</h2>
+                    <h2>Phase 1: User Setup</h2>
                     <div class="guide-box">
-                        <h3>Step 1: Create a Borrower Account</h3>
-                        <p>First, register the borrower in the system</p>
+                        <h3>Step 1: Create Employee</h3>
+                        <p>First, create employee accounts for field operations</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method post">POST</span>
+                                <span class="path">/api/v1/employees</span>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/employees' \
+--header 'Content-Type: application/json' \
+--data '{
+    "first_name": "Field",
+    "last_name": "Officer",
+    "email": "officer@example.com",
+    "phone": "+1234567890",
+    "role": "field_officer",
+    "status": "active"
+}'</code></pre>
+                            </div>
+                        </div>
+                        <p class="note">�� Save the employee_id - needed for document uploads and approvals</p>
+
+                        <h3>Step 2: Create Borrower</h3>
                         <div class="endpoint-container">
                             <div class="endpoint">
                                 <span class="method post">POST</span>
                                 <span class="path">/api/v1/borrowers</span>
-                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                             </div>
                             <div class="curl-sample">
                                 <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/borrowers" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json" \
--d '{
-    "name": "John Doe",
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/borrowers' \
+--header 'Content-Type: application/json' \
+--data '{
+    "first_name": "John",
+    "last_name": "Doe",
     "email": "john@example.com",
     "phone": "+1234567890",
-    "address": "123 Main St",
-    "credit_score": 750
+    "address": "123 Main St"
 }'</code></pre>
                             </div>
                         </div>
-                        <p class="note">📝 Save the borrower_id from the response - you'll need it for creating the loan</p>
+                        <p class="note">📝 Save the borrower_id for loan creation</p>
+
+                        <h3>Step 3: Create Investor (Optional)</h3>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method post">POST</span>
+                                <span class="path">/api/v1/investors</span>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/investors' \
+--header 'Content-Type: application/json' \
+--data '{
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane.smith@example.com",
+    "phone": "+1234567890",
+    "kyc_status": "pending"
+}'</code></pre>
+                            </div>
+                        </div>
                     </div>
 
                     <h2>Phase 2: Loan Creation</h2>
                     <div class="guide-box">
-                        <h3>Step 2: Create a Loan Application</h3>
-                        <p>Create a loan using the borrower_id from Step 1</p>
+                        <h3>Step 4: Create Loan</h3>
                         <div class="endpoint-container">
                             <div class="endpoint">
                                 <span class="method post">POST</span>
                                 <span class="path">/api/v1/loans</span>
-                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                             </div>
                             <div class="curl-sample">
                                 <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json" \
--d '{
-    "borrower_id": "BORROWER_ID_FROM_STEP_1",
-    "principal_amount": 50000,
-    "rate": 12.5,
-    "roi": 8.5,
-    "term_months": 24
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans' \
+--header 'Content-Type: application/json' \
+--data '{
+    "borrower_id": 1,
+    "principal_amount": 50000.00,
+    "rate": 12.50,
+    "roi": 8.50,
+    "status": "proposed"
 }'</code></pre>
                             </div>
                         </div>
-                        <p class="note">📝 Save the loan_id from the response - you'll need it for all following steps</p>
-                    </div>
+                        <p class="note">📝 Save the loan_id for subsequent steps</p>
 
-                    <h2>Phase 3: Document Collection</h2>
-                    <div class="guide-box">
-                        <h3>Step 3: Upload Required Documents</h3>
-                        <p>Upload all necessary documents for the loan</p>
+                        <h3>Step 5: Upload Documents</h3>
                         <div class="endpoint-container">
                             <div class="endpoint">
                                 <span class="method post">POST</span>
                                 <span class="path">/api/v1/loans/{loan_id}/documents</span>
-                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                             </div>
                             <div class="curl-sample">
                                 <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/LOAN_ID/documents" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: multipart/form-data" \
--F "document=@/path/to/document.pdf" \
--F "type=identity_proof" \
--F "description=Identity verification document"</code></pre>
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans/1/documents' \
+--header 'Content-Type: application/json' \
+--data '{
+    "loan_id": 1,
+    "document_type": "kyc",
+    "file_url": "https://storage.example.com/documents/kyc.pdf",
+    "uploaded_by_id": 1
+}'</code></pre>
                             </div>
                         </div>
-                        <p class="note">⚠️ Repeat this step for each required document (ID proof, income proof, etc.)</p>
+                        <p class="note">⚠️ Repeat for all document types: validation_proof, agreement_letter, signed_agreement</p>
                     </div>
 
-                    <h2>Phase 4: Loan Approval</h2>
+                    <h2>Phase 3: Loan Approval</h2>
                     <div class="guide-box">
-                        <h3>Step 4: Get Loan Approved</h3>
-                        <p>Field validator must visit borrower and submit approval</p>
+                        <h3>Step 6: Approve Loan</h3>
                         <div class="endpoint-container">
                             <div class="endpoint">
                                 <span class="method put">PUT</span>
                                 <span class="path">/api/v1/loans/{loan_id}/approve</span>
-                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                             </div>
                             <div class="curl-sample">
                                 <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/LOAN_ID/approve" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: multipart/form-data" \
--F "field_validator_id=EMP456" \
--F "approval_date=2024-03-21" \
--F "verification_photo=@/path/to/photo.jpg" \
--F "remarks=Borrower verification completed successfully"</code></pre>
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans/1/approve' \
+--header 'Content-Type: application/json' \
+--data '{
+    "field_validator_id": 1,
+    "validation_proof_url": "https://storage.example.com/proofs/visit.jpg"
+}'</code></pre>
                             </div>
                         </div>
-                        <p class="note">✅ After approval, the loan becomes visible to investors</p>
                     </div>
 
-                    <h2>Phase 5: Investment Collection</h2>
+                    <h2>Phase 4: Investment Collection</h2>
                     <div class="guide-box">
-                        <h3>Step 5: Collect Investments</h3>
-                        <p>Multiple investors can invest in the loan</p>
+                        <h3>Step 7: Process Investments</h3>
                         <div class="endpoint-container">
                             <div class="endpoint">
                                 <span class="method post">POST</span>
                                 <span class="path">/api/v1/loans/{loan_id}/investments</span>
-                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                             </div>
                             <div class="curl-sample">
                                 <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/LOAN_ID/investments" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json" \
--d '{
-    "investor_id": "INV789",
-    "amount": 25000,
-    "investment_date": "2024-03-21"
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans/1/investments' \
+--header 'Content-Type: application/json' \
+--data '{
+    "investor_id": 1,
+    "amount": 25000.00
 }'</code></pre>
                             </div>
                         </div>
-                        <p class="note">⚠️ Repeat this step until total investment equals loan amount</p>
-
-                        <h3>Step 5.1: Check Investment Status</h3>
-                        <p>Verify if the loan is fully funded</p>
-                        <div class="endpoint-container">
-                            <div class="endpoint">
-                                <span class="method get">GET</span>
-                                <span class="path">/api/v1/loans/{loan_id}/investments/status</span>
-                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
-                            </div>
-                            <div class="curl-sample">
-                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl -X GET "https://api.loanservice.com/api/v1/loans/LOAN_ID/investments/status" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json"</code></pre>
-                            </div>
-                        </div>
+                        <p class="note">⚠️ Repeat until loan is fully funded</p>
                     </div>
 
-                    <h2>Phase 6: Loan Disbursement</h2>
+                    <h2>Phase 5: Loan Disbursement</h2>
                     <div class="guide-box">
-                        <h3>Step 6: Disburse the Loan</h3>
-                        <p>Final step: disburse money to borrower</p>
+                        <h3>Step 8: Disburse Loan</h3>
                         <div class="endpoint-container">
                             <div class="endpoint">
                                 <span class="method put">PUT</span>
                                 <span class="path">/api/v1/loans/{loan_id}/disburse</span>
-                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                             </div>
                             <div class="curl-sample">
                                 <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/LOAN_ID/disburse" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: multipart/form-data" \
--F "field_officer_id=EMP789" \
--F "disbursement_date=2024-03-22" \
--F "signed_agreement=@/path/to/agreement.pdf" \
--F "disbursement_method=bank_transfer" \
--F "bank_details={
-    \"account_number\": \"1234567890\",
-    \"bank_name\": \"Example Bank\",
-    \"ifsc_code\": \"EXBK0001234\"
-}"</code></pre>
+                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans/1/disburse' \
+--header 'Content-Type: application/json' \
+--data '{
+    "field_officer_id": 1,
+    "signed_agreement_url": "https://storage.example.com/agreements/signed.pdf"
+}'</code></pre>
                             </div>
                         </div>
                         <p class="note">🎉 Loan process complete!</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <h3>⚠️ Important Notes:</h3>
+                        <ul>
+                            <li>Create employees first - they're needed for document uploads and approvals</li>
+                            <li>Save all IDs returned in responses</li>
+                            <li>Follow state transitions: proposed → approved → invested → disbursed</li>
+                            <li>Verify each step's completion before proceeding</li>
+                            <li>Use appropriate employee roles for different actions</li>
+                        </ul>
                     </div>
                 </div>
             </div>

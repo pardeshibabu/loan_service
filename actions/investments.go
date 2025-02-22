@@ -99,7 +99,7 @@ func InvestmentsCreate(c buffalo.Context) error {
 
 		// Create state history
 		history := &models.LoanStateHistory{
-			LoanID:      loan.ID,
+			Loan:        *loan,
 			ChangedByID: investment.InvestorID, // Using investor as the changer
 			FromStatus:  strPtr(string(models.LoanStatusApproved)),
 			ToStatus:    string(models.LoanStatusInvested),

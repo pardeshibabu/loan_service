@@ -109,7 +109,7 @@ func LoansApprove(c buffalo.Context) error {
 
 	// Create state history
 	history := &models.LoanStateHistory{
-		LoanID:      loan.ID,
+		Loan:        *loan,
 		ChangedByID: req.FieldValidatorID,
 		FromStatus:  strPtr(string(models.LoanStatusProposed)),
 		ToStatus:    string(models.LoanStatusApproved),
@@ -167,7 +167,7 @@ func LoansDisburse(c buffalo.Context) error {
 
 	// Create state history
 	history := &models.LoanStateHistory{
-		LoanID:      loan.ID,
+		Loan:        *loan,
 		ChangedByID: req.FieldOfficerID,
 		FromStatus:  strPtr(string(models.LoanStatusInvested)),
 		ToStatus:    string(models.LoanStatusDisbursed),

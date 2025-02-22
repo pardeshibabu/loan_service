@@ -63,12 +63,12 @@ func EmployeesCreate(c buffalo.Context) error {
 	}
 
 	// Check if employee_id is unique
-	exists, err := tx.Where("employee_id = ?", employee.EmployeeID).Exists(&models.Employee{})
+	exists, err := tx.Where("id = ?", employee.ID).Exists(&models.Employee{})
 	if err != nil {
 		return err
 	}
 	if exists {
-		return c.Error(http.StatusBadRequest, fmt.Errorf("employee_id must be unique"))
+		return c.Error(http.StatusBadRequest, fmt.Errorf("id must be unique"))
 	}
 
 	verrs, err := tx.ValidateAndCreate(employee)
@@ -92,19 +92,19 @@ func EmployeesUpdate(c buffalo.Context) error {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	oldEmployeeID := employee.EmployeeID
+	oldID := employee.ID
 	if err := c.Bind(employee); err != nil {
 		return err
 	}
 
 	// Check if employee_id is changed and is unique
-	if oldEmployeeID != employee.EmployeeID {
-		exists, err := tx.Where("employee_id = ?", employee.EmployeeID).Exists(&models.Employee{})
+	if oldID != employee.ID {
+		exists, err := tx.Where("id = ?", employee.ID).Exists(&models.Employee{})
 		if err != nil {
 			return err
 		}
 		if exists {
-			return c.Error(http.StatusBadRequest, fmt.Errorf("employee_id must be unique"))
+			return c.Error(http.StatusBadRequest, fmt.Errorf("id must be unique"))
 		}
 	}
 

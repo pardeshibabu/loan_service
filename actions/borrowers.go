@@ -11,20 +11,55 @@ import (
 	"github.com/gobuffalo/pop/v6"
 )
 
+// SearchParams defines search parameters
+type SearchParams struct {
+	Search string `form:"search"`
+	Field  string `form:"field"`
+	Sort   string `form:"sort"`
+	Order  string `form:"order"`
+}
+
+// ApplySearch applies search parameters to query
+func ApplySearch(q *pop.Query, s SearchParams) *pop.Query {
+	if s.Search != "" && s.Field != "" {
+		q = q.Where(s.Field+" LIKE ?", "%"+s.Search+"%")
+	}
+
+	if s.Sort != "" {
+		order := "ASC"
+		if s.Order == "desc" {
+			order = "DESC"
+		}
+		q = q.Order(s.Sort + " " + order)
+	}
+
+	return q
+}
+
 // BorrowersList gets all borrowers
 func BorrowersList(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	borrowers := &[]models.Borrower{}
 
-	// Parse search params
-	search := SearchParams{}
-	if err := c.Bind(&search); err != nil {
-		return err
+	// Build basic query
+	q := tx.Q()
+
+	// Apply search if parameters exist
+	if search := c.Param("search"); search != "" {
+		field := c.Param("field")
+		if field != "" {
+			q = q.Where(field+" LIKE ?", "%"+search+"%")
+		}
 	}
 
-	// Build query
-	q := tx.Q()
-	q = ApplySearch(q, search)
+	// Apply sorting if parameters exist
+	if sort := c.Param("sort"); sort != "" {
+		order := "ASC"
+		if c.Param("order") == "desc" {
+			order = "DESC"
+		}
+		q = q.Order(sort + " " + order)
+	}
 
 	// Apply pagination
 	q = q.PaginateFromParams(c.Params())
@@ -33,7 +68,6 @@ func BorrowersList(c buffalo.Context) error {
 		return err
 	}
 
-	c.Set("pagination", q.Paginator)
 	return c.Render(http.StatusOK, r.JSON(borrowers))
 }
 

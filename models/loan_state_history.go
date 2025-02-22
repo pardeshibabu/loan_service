@@ -11,7 +11,6 @@ import (
 // LoanStateHistory model
 type LoanStateHistory struct {
 	Model
-	LoanID      int64     `json:"loan_id" db:"loan_id"`
 	ChangedByID int64     `json:"changed_by_id" db:"changed_by_id"`
 	FromStatus  *string   `json:"from_status" db:"from_status"`
 	ToStatus    string    `json:"to_status" db:"to_status"`
@@ -25,7 +24,7 @@ type LoanStateHistory struct {
 // Validate gets run every time you call a "pop.Validate*" method.
 func (l *LoanStateHistory) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
-		&validators.IntIsPresent{Field: int(l.LoanID), Name: "LoanID"},
+		&validators.IntIsPresent{Field: int(l.Loan.ID), Name: "LoanID"},
 		&validators.IntIsPresent{Field: int(l.ChangedByID), Name: "ChangedByID"},
 		&validators.StringIsPresent{Field: l.ToStatus, Name: "ToStatus"},
 		&validators.TimeIsPresent{Field: l.ChangedAt, Name: "ChangedAt"},

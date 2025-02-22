@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
@@ -17,16 +19,18 @@ const (
 
 // Investment model
 type Investment struct {
-	Model
-	LoanID             int64            `json:"loan_id" db:"loan_id"`
-	InvestorID         int64            `json:"investor_id" db:"investor_id"`
-	Amount             float64          `json:"amount" db:"amount"`
-	AgreementLetterURL *string          `json:"agreement_letter_url" db:"agreement_letter_url"`
-	Status             InvestmentStatus `json:"status" db:"status"`
+	ID             int64            `json:"id" db:"id"`
+	CreatedAt      time.Time        `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time        `json:"updated_at" db:"updated_at"`
+	LoanID         int64            `json:"loan_id" db:"loan_id"`
+	InvestorID     int64            `json:"investor_id" db:"investor_id"`
+	Amount         float64          `json:"amount" db:"amount"`
+	Status         InvestmentStatus `json:"status" db:"status"`
+	InvestmentDate *time.Time       `json:"investment_date" db:"investment_date"`
 
 	// Relationships
-	Loan     Loan     `json:"loan,omitempty" belongs_to:"loans"`
-	Investor Investor `json:"investor,omitempty" belongs_to:"investors"`
+	Loan     *Loan     `json:"loan" belongs_to:"loans" fk_id:"loan_id"`
+	Investor *Investor `json:"investor" belongs_to:"investors" fk_id:"investor_id"`
 }
 
 // Validate gets run every time you call a "pop.Validate*" method.

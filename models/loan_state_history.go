@@ -11,6 +11,7 @@ import (
 // LoanStateHistory model
 type LoanStateHistory struct {
 	Model
+	LoanID      int64     `json:"loan_id" db:"loan_id"`
 	ChangedByID int64     `json:"changed_by_id" db:"changed_by_id"`
 	FromStatus  *string   `json:"from_status" db:"from_status"`
 	ToStatus    string    `json:"to_status" db:"to_status"`

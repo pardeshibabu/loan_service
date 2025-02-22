@@ -43,7 +43,7 @@ func LoansShow(c buffalo.Context) error {
 	return c.Render(http.StatusOK, r.JSON(loan))
 }
 
-// LoansCreate default implementation.
+// LoansCreate creates a new loan
 func LoansCreate(c buffalo.Context) error {
 	loan := &models.Loan{}
 	if err := c.Bind(loan); err != nil {
@@ -62,6 +62,11 @@ func LoansCreate(c buffalo.Context) error {
 		return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
 	}
 
+	// Fetch the fresh loan with relationships
+	if err := tx.Eager("Borrower").Find(loan, loan.ID); err != nil {
+		return err
+	}
+
 	return c.Render(http.StatusCreated, r.JSON(loan))
 }
 
@@ -70,8 +75,8 @@ func LoansApprove(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	loan := &models.Loan{}
 
-	// Find the loan
-	if err := tx.Find(loan, c.Param("id")); err != nil {
+	// Find the loan with eager loading
+	if err := tx.Eager("Borrower", "FieldValidator", "FieldOfficer").Find(loan, c.Param("id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
@@ -109,7 +114,7 @@ func LoansApprove(c buffalo.Context) error {
 
 	// Create state history
 	history := &models.LoanStateHistory{
-		Loan:        *loan,
+		LoanID:      loan.ID,
 		ChangedByID: req.FieldValidatorID,
 		FromStatus:  strPtr(string(models.LoanStatusProposed)),
 		ToStatus:    string(models.LoanStatusApproved),
@@ -117,6 +122,11 @@ func LoansApprove(c buffalo.Context) error {
 	}
 
 	if err := tx.Create(history); err != nil {
+		return err
+	}
+
+	// After updating, fetch the fresh loan with relationships
+	if err := tx.Eager("Borrower", "FieldValidator", "FieldOfficer").Find(loan, loan.ID); err != nil {
 		return err
 	}
 
@@ -167,7 +177,7 @@ func LoansDisburse(c buffalo.Context) error {
 
 	// Create state history
 	history := &models.LoanStateHistory{
-		Loan:        *loan,
+		LoanID:      loan.ID,
 		ChangedByID: req.FieldOfficerID,
 		FromStatus:  strPtr(string(models.LoanStatusInvested)),
 		ToStatus:    string(models.LoanStatusDisbursed),

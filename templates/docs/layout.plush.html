@@ -445,16 +445,16 @@
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/borrowers/123" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json" \
--d '{
-    "name": "John Doe Updated",
-    "email": "john.updated@example.com",
-    "phone": "+1234567890",
-    "address": "456 New St",
-    "credit_score": 780
-}'</code></pre>
+                        <pre><code>curl --location --request PUT 'http://0.0.0.0:3000/api/v1/borrowers/1' \
+                            --header 'Authorization: Bearer YOUR_API_KEY' \
+                            --header 'Content-Type: application/json' \
+                            --data-raw '{
+                            "first_name": "John Updated",
+                            "last_name": "Doe Updated",
+                            "email": "john.updated@example.com",
+                            "phone": "+1234567890",
+                            "address": "456 New St"
+                            }'</code></pre>
                     </div>
                 </div>
 
@@ -744,18 +744,12 @@
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/123/disburse" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: multipart/form-data" \
--F "field_officer_id=EMP789" \
--F "disbursement_date=2024-03-22" \
--F "signed_agreement=@/path/to/agreement.pdf" \
--F "disbursement_method=bank_transfer" \
--F "bank_details={
-    \"account_number\": \"1234567890\",
-    \"bank_name\": \"Example Bank\",
-    \"ifsc_code\": \"EXBK0001234\"
-}"</code></pre>
+                        <pre><code>curl --location --request PUT 'http://0.0.0.0:3000/api/v1/loans/1/disburse' \
+                            --header 'Content-Type: application/json' \
+                            --data '{
+                                "field_officer_id": 1,
+                                "signed_agreement_url": "https://storage.example.com/agreements/signed.pdf"
+                            }'</code></pre>
                     </div>
                 </div>
             </div>
@@ -772,14 +766,12 @@
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/123/investments" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json" \
--d '{
-    "investor_id": "INV789",
-    "amount": 25000,
-    "investment_date": "2024-03-21"
-}'</code></pre>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans/1/investments' \
+                            --header 'Content-Type: application/json' \
+                            --data '{
+                                "investor_id": 1,
+                                "amount": 25000.00
+                            }'</code></pre>
                     </div>
                 </div>
 
@@ -1028,12 +1020,12 @@
                             </div>
                             <div class="curl-sample">
                                 <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                                <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans/1/disburse' \
---header 'Content-Type: application/json' \
---data '{
-    "field_officer_id": 1,
-    "signed_agreement_url": "https://storage.example.com/agreements/signed.pdf"
-}'</code></pre>
+                                <pre><code>curl --location --request PUT 'http://0.0.0.0:3000/api/v1/loans/1/disburse' \
+                                    --header 'Content-Type: application/json' \
+                                    --data '{
+                                        "field_officer_id": 1,
+                                        "signed_agreement_url": "https://storage.example.com/agreements/signed.pdf"
+                                    }'</code></pre>
                             </div>
                         </div>
                         <p class="note">🎉 Loan process complete!</p>

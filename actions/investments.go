@@ -3,7 +3,6 @@ package actions
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"loan_service/models"
 
@@ -43,24 +42,11 @@ func InvestmentsShow(c buffalo.Context) error {
 // InvestmentsCreate creates a new investment
 func InvestmentsCreate(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
-	investment := &models.Investment{}
 
-	// Bind investment data
-	if err := c.Bind(investment); err != nil {
-		return err
-	}
-
-	// Set loan ID from URL
-	loanID, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
-		return c.Error(http.StatusBadRequest, fmt.Errorf("invalid loan ID"))
-	}
-	investment.LoanID = loanID
-
-	// Get the loan to check status and amount
+	// Get the loan first
 	loan := &models.Loan{}
-	if err := tx.Find(loan, investment.LoanID); err != nil {
-		return c.Error(http.StatusNotFound, err)
+	if err := tx.Find(loan, c.Param("id")); err != nil {
+		return c.Error(http.StatusNotFound, fmt.Errorf("loan not found"))
 	}
 
 	// Validate loan status
@@ -68,19 +54,36 @@ func InvestmentsCreate(c buffalo.Context) error {
 		return c.Error(http.StatusBadRequest, fmt.Errorf("loan must be in approved state for investment"))
 	}
 
-	// Calculate total invested amount
-	var totalInvested float64
-	if err := tx.Where("loan_id = ?", loan.ID).Select("SUM(amount)").First(&totalInvested); err != nil {
+	// Create investment
+	investment := &models.Investment{
+		LoanID: loan.ID,
+		Status: models.InvestmentStatusActive,
+	}
+
+	// Bind request data
+	if err := c.Bind(investment); err != nil {
 		return err
 	}
 
+	// Calculate total invested amount
+	var totalInvested float64
+	query := tx.RawQuery("SELECT COALESCE(SUM(amount), 0) FROM investments WHERE loan_id = ?", loan.ID)
+	if err := query.First(&totalInvested); err != nil {
+		return err
+	}
+
+	// Calculate remaining amount
+	remainingAmount := loan.PrincipalAmount - totalInvested
+
 	// Check if new investment would exceed principal
-	if totalInvested+investment.Amount > loan.PrincipalAmount {
-		return c.Error(http.StatusBadRequest, fmt.Errorf("investment would exceed loan principal amount"))
+	if investment.Amount > remainingAmount {
+		return c.Error(http.StatusBadRequest, fmt.Errorf(
+			"investment amount %.2f exceeds available amount %.2f (total loan amount: %.2f, already invested: %.2f)",
+			investment.Amount, remainingAmount, loan.PrincipalAmount, totalInvested,
+		))
 	}
 
 	// Create investment
-	investment.Status = models.InvestmentStatusActive
 	verrs, err := tx.ValidateAndCreate(investment)
 	if err != nil {
 		return err
@@ -96,19 +99,11 @@ func InvestmentsCreate(c buffalo.Context) error {
 		if err := tx.Update(loan); err != nil {
 			return err
 		}
+	}
 
-		// Create state history
-		history := &models.LoanStateHistory{
-			Loan:        *loan,
-			ChangedByID: investment.InvestorID, // Using investor as the changer
-			FromStatus:  strPtr(string(models.LoanStatusApproved)),
-			ToStatus:    string(models.LoanStatusInvested),
-			ChangedAt:   investment.CreatedAt,
-		}
-
-		if err := tx.Create(history); err != nil {
-			return err
-		}
+	// Fetch fresh investment with relationships
+	if err := tx.Eager("Loan", "Investor").Find(investment, investment.ID); err != nil {
+		return err
 	}
 
 	return c.Render(http.StatusCreated, r.JSON(investment))

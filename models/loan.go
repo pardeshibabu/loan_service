@@ -20,7 +20,9 @@ const (
 
 // Loan model
 type Loan struct {
-	Model
+	ID                 int64      `json:"id" db:"id"`
+	CreatedAt          time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt          time.Time  `json:"updated_at" db:"updated_at"`
 	BorrowerID         int64      `json:"borrower_id" db:"borrower_id"`
 	PrincipalAmount    float64    `json:"principal_amount" db:"principal_amount"`
 	Rate               float64    `json:"rate" db:"rate"`
@@ -35,9 +37,9 @@ type Loan struct {
 	AgreementLetterURL *string    `json:"agreement_letter_url" db:"agreement_letter_url"`
 
 	// Relationships
-	Borrower       Borrower     `json:"borrower,omitempty" belongs_to:"borrower"`
-	FieldValidator *Employee    `json:"field_validator,omitempty" belongs_to:"employees"`
-	FieldOfficer   *Employee    `json:"field_officer,omitempty" belongs_to:"employees"`
+	Borrower       *Borrower    `json:"borrower" belongs_to:"borrowers" fk_id:"borrower_id"`
+	FieldValidator *Employee    `json:"field_validator" belongs_to:"employees" fk_id:"field_validator_id"`
+	FieldOfficer   *Employee    `json:"field_officer" belongs_to:"employees" fk_id:"field_officer_id"`
 	Investments    []Investment `json:"investments,omitempty" has_many:"investments"`
 	Documents      []Document   `json:"documents,omitempty" has_many:"documents"`
 }

@@ -29,34 +29,17 @@ func InvestorsList(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	investors := &[]models.Investor{}
 
-	// Parse search params
-	search := SearchParams{}
-	if err := c.Bind(&search); err != nil {
-		return err
-	}
+	// Build query with pagination
+	q := tx.PaginateFromParams(c.Params())
 
-	// Build query
-	q := tx.Q()
-	q = ApplySearch(q, search)
-
-	// Add KYC status filter
-	if status := c.Param("kyc_status"); status != "" {
-		q = q.Where("kyc_status = ?", status)
-	}
-
-	// Add investment amount filter
-	if minAmount := c.Param("min_investment"); minAmount != "" {
-		q = q.Where("total_investment_amount >= ?", minAmount)
-	}
-
-	// Apply pagination
-	q = q.PaginateFromParams(c.Params())
-
+	// Retrieve all Investors from the DB
 	if err := q.All(investors); err != nil {
 		return err
 	}
 
+	// Add pagination info to response
 	c.Set("pagination", q.Paginator)
+
 	return c.Render(http.StatusOK, r.JSON(investors))
 }
 

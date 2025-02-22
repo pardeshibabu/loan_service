@@ -41,7 +41,7 @@ func EmployeesShow(c buffalo.Context) error {
 	employee := &models.Employee{}
 
 	if err := tx.Find(employee, c.Param("id")); err != nil {
-		return c.Error(http.StatusNotFound, err)
+		return c.Error(http.StatusNotFound, fmt.Errorf("employee with id %s not found", c.Param("id")))
 	}
 
 	return c.Render(http.StatusOK, r.JSON(employee))

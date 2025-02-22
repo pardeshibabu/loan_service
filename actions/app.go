@@ -5,14 +5,12 @@ import (
 	"sync"
 
 	"loan_service/locales"
-	"loan_service/middleware"
 	"loan_service/models"
 	"loan_service/public"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
 	"github.com/gobuffalo/envy"
-	"github.com/gobuffalo/middleware/csrf"
 	"github.com/gobuffalo/middleware/forcessl"
 	"github.com/gobuffalo/middleware/i18n"
 	"github.com/gobuffalo/middleware/paramlogger"
@@ -55,10 +53,6 @@ func App() *buffalo.App {
 		// Log request parameters (filters apply).
 		app.Use(paramlogger.ParameterLogger)
 
-		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
-		// Remove to disable this.
-		app.Use(csrf.New)
-
 		// Wraps each request in a transaction.
 		//   c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
@@ -68,10 +62,8 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 
-		// API Group with authentication
+		// API Group without CSRF
 		api := app.Group("/api/v1")
-		api.Use(middleware.AuthMiddleware)
-
 		// Borrower routes
 		api.GET("/borrowers", BorrowersList)
 		api.GET("/borrowers/{id}", BorrowersShow)
@@ -108,7 +100,6 @@ func App() *buffalo.App {
 
 		// API Documentation
 		app.GET("/docs", DocsHandler)
-		app.ServeFiles("/docs/", DocsFS())
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

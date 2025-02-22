@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Loan Service API Documentation</title>
+    <%= stylesheetTag("application.css") %>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #3B82F6;
+            --bg-dark: #0F172A;
+            --bg-darker: #1E293B;
+            --text-light: #E2E8F0;
+            --text-gray: #94A3B8;
+            --border-color: #334155;
+            --hover-color: #1E40AF;
+            
+            /* Method colors */
+            --get-color: #2563EB;
+            --post-color: #059669;
+            --put-color: #D97706;
+            --delete-color: #DC2626;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            color: var(--text-light);
+            background: var(--bg-dark);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            background: var(--bg-darker);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+            box-shadow: none;
+        }
+
+        .sidebar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-section {
+            margin: 25px 0 10px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-gray);
+        }
+
+        .nav-item {
+            margin: 5px 0;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 15px;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .nav-item .count {
+            background: var(--bg-dark);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            /* margin-left: var(--sidebar-width); */
+            padding: 20px 40px;
+            flex: 1;
+        }
+
+        /* Endpoint Styles */
+        .endpoint {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: var(--bg-darker);
+        }
+
+        .endpoint:hover {
+            border-color: var(--primary-color);
+        }
+
+        .endpoint-header {
+            background: var(--bg-darker);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .method {
+            color: white;
+            font-weight: 500;
+        }
+
+        .get { background: var(--get-color); }
+        .post { background: var(--post-color); }
+        .put { background: var(--put-color); }
+        .delete { background: var(--delete-color); }
+
+        .endpoint-content {
+            padding: 20px;
+            display: none;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-dark);
+        }
+
+        .endpoint.active .endpoint-content {
+            display: block;
+        }
+
+        /* Request/Response Tabs */
+        .tabs {
+            margin-top: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            display: inline-block;
+            padding: 8px 15px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            margin-bottom: -1px;
+            color: var(--text-gray);
+        }
+
+        .tab.active {
+            color: var(--text-light);
+            border: 1px solid var(--primary-color);
+            border-color: var(--primary-color);
+            background: var(--bg-darker);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--bg-darker);
+            color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Try it out section */
+        .try-it-out {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg-darker);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .try-it-out input, .try-it-out textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: var(--bg-dark);
+            color: var(--text-light);
+        }
+
+        .try-it-out input:focus, .try-it-out textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(13, 150, 242, 0.1);
+        }
+
+        .try-it-out button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .try-it-out button:hover {
+            background: var(--hover-color);
+        }
+
+        /* Schema Section */
+        .schema {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .section-title {
+            color: var(--text-light);
+            font-size: 24px;
+            margin: 30px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .description {
+            font-size: 15px;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+            background: var(--bg-dark);
+            color: var(--text-gray);
+        }
+
+        .required {
+            color: #f44336;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        /* Section Visibility */
+        .api-section {
+            display: none;
+        }
+
+        .api-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Add some cool effects */
+        .endpoint-header::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: var(--get-color);
+        }
+
+        .endpoint-header[data-method="post"]::before {
+            background: var(--post-color);
+        }
+
+        .endpoint-header[data-method="put"]::before {
+            background: var(--put-color);
+        }
+
+        .endpoint-header[data-method="delete"]::before {
+            background: var(--delete-color);
+        }
+
+        /* Add a subtle glow effect to active elements */
+        .nav-item.active,
+        .endpoint:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/assets/logo.svg" alt="API Docs" height="30">
+            Loan Service API
+        </div>
+        
+        <div class="nav-section">Core APIs</div>
+        <div class="nav-item" onclick="showSection('borrowers')">
+            Borrowers
+            <span class="count">3</span>
+        </div>
+        <div class="nav-item" onclick="showSection('investors')">
+            Investors
+            <span class="count">4</span>
+        </div>
+        <div class="nav-item" onclick="showSection('loans')">
+            Loans
+            <span class="count">5</span>
+        </div>
+        
+        <div class="nav-section">Investment</div>
+        <div class="nav-item" onclick="showSection('investments')">
+            Investments
+            <span class="count">2</span>
+        </div>
+        <div class="nav-item" onclick="showSection('kyc')">
+            KYC Management
+            <span class="count">3</span>
+        </div>
+        
+        <div class="nav-section">Documents</div>
+        <div class="nav-item" onclick="showSection('documents')">
+            Document Management
+            <span class="count">2</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="docs-section" id="introduction">
+            <h1>Introduction</h1>
+            <p>Welcome to the Loan Service API documentation. This API allows you to integrate loan management functionality into your applications.</p>
+            
+            <h2>Base URL</h2>
+            <div class="code-block">
+                <code>https://api.loanservice.com/v1</code>
+            </div>
+
+            <h2>Request Format</h2>
+            <p>All requests should be made with JSON payloads and include the appropriate headers:</p>
+            <div class="code-block">
+                <code>
+                    Content-Type: application/json<br>
+                    Authorization: Bearer YOUR_API_KEY
+                </code>
+            </div>
+        </div>
+
+        <div class="docs-section" id="authentication">
+            <h1>Authentication</h1>
+            <p>The API uses bearer token authentication. Include your API key in the Authorization header:</p>
+            
+            <div class="code-block">
+                <pre><code>curl -X GET "https://api.loanservice.com/v1/loans" \
+-H "Authorization: Bearer your_api_key_here"</code></pre>
+            </div>
+        </div>
+
+        <div class="docs-section" id="errors">
+            <h1>Error Handling</h1>
+            <p>The API uses conventional HTTP response codes to indicate the success or failure of requests.</p>
+            
+            <table class="docs-table">
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>200</td>
+                    <td>Success</td>
+                </tr>
+                <tr>
+                    <td>400</td>
+                    <td>Bad Request</td>
+                </tr>
+                <tr>
+                    <td>401</td>
+                    <td>Unauthorized</td>
+                </tr>
+                <tr>
+                    <td>404</td>
+                    <td>Not Found</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="docs-section" id="loans">
+            <h1>Loans API</h1>
+            
+            <h2>Create a Loan</h2>
+            <div class="endpoint">
+                <span class="method">POST</span>
+                <span class="path">/loans</span>
+            </div>
+            
+            <h3>Request Body</h3>
+            <div class="code-block">
+                <pre><code>{
+  "amount": 10000,
+  "term_months": 12,
+  "interest_rate": 5.5,
+  "purpose": "home_improvement"
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="docs-section" id="payments">
+            <h1>Payments API</h1>
+            
+            <h2>Create a Payment</h2>
+            <div class="endpoint">
+                <span class="method">POST</span>
+                <span class="path">/payments</span>
+            </div>
+            
+            <h3>Request Body</h3>
+            <div class="code-block">
+                <pre><code>{
+  "loan_id": "loan_123",
+  "amount": 1000,
+  "payment_method": "bank_transfer"
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Borrowers Section -->
+        <section id="borrowers" class="api-section">
+            <h2 class="section-title">Borrowers API</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method get">GET</span>
+                    <span>/api/v1/borrowers</span>
+                    <span class="badge">Paginated</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">Retrieve a list of borrowers</div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab(this, 'request')">Request</div>
+                        <div class="tab" onclick="switchTab(this, 'response')">Response</div>
+                        <div class="tab" onclick="switchTab(this, 'schema')">Schema</div>
+                    </div>
+
+                    <div class="tab-content active" data-tab="request">
+                        <pre>curl -X GET "http://localhost:3000/api/v1/borrowers"</pre>
+
+                        <div class="try-it-out">
+                            <h4>Try it out</h4>
+                            <button onclick="tryBorrowers()">Execute</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" data-tab="response">
+                        <pre>{
+    "borrowers": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com"
+        },
+        {
+            "id": 2,
+            "name": "Jane Smith",
+            "email": "jane@example.com"
+        }
+    ]
+}</pre>
+                    </div>
+
+                    <div class="tab-content" data-tab="schema">
+                        <div class="schema">
+                            <h4>Response Schema</h4>
+                            <pre>{
+    "type": "object",
+    "properties": {
+        "borrowers": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add all borrower endpoints -->
+        </section>
+
+        <!-- Investors Section -->
+        <section id="investors" class="api-section">
+            <h2 class="section-title">Investors API</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method get">GET</span>
+                    <span>/api/v1/investors</span>
+                    <span class="badge">Paginated</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">Retrieve a list of investors</div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab(this, 'request')">Request</div>
+                        <div class="tab" onclick="switchTab(this, 'response')">Response</div>
+                        <div class="tab" onclick="switchTab(this, 'schema')">Schema</div>
+                    </div>
+
+                    <div class="tab-content active" data-tab="request">
+                        <pre>curl -X GET "http://localhost:3000/api/v1/investors"</pre>
+
+                        <div class="try-it-out">
+                            <h4>Try it out</h4>
+                            <button onclick="tryInvestors()">Execute</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" data-tab="response">
+                        <pre>{
+    "investors": [
+        {
+            "id": 1,
+            "name": "Investor One",
+            "email": "investor1@example.com"
+        },
+        {
+            "id": 2,
+            "name": "Investor Two",
+            "email": "investor2@example.com"
+        }
+    ]
+}</pre>
+                    </div>
+
+                    <div class="tab-content" data-tab="schema">
+                        <div class="schema">
+                            <h4>Response Schema</h4>
+                            <pre>{
+    "type": "object",
+    "properties": {
+        "investors": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add all investor endpoints -->
+        </section>
+
+        <!-- Loans Section -->
+        <section id="loans" class="api-section">
+            <h2 class="section-title">Loans API</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method get">GET</span>
+                    <span>/api/v1/loans</span>
+                    <span class="badge">Paginated</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">List all loans with optional filters</div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab(this, 'request')">Request</div>
+                        <div class="tab" onclick="switchTab(this, 'response')">Response</div>
+                        <div class="tab" onclick="switchTab(this, 'schema')">Schema</div>
+                    </div>
+
+                    <div class="tab-content active" data-tab="request">
+                        <pre>curl -X GET "http://localhost:3000/api/v1/loans?status=pending&page=1" \
+    -H "Authorization: Bearer your-jwt-token"</pre>
+
+                        <div class="try-it-out">
+                            <h4>Try it out</h4>
+                            <select id="loan-status">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="disbursed">Disbursed</option>
+                            </select>
+                            <button onclick="tryGetLoans()">Execute</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" data-tab="response">
+                        <pre>{
+    "loans": [
+        {
+            "id": 1,
+            "borrower_id": 1,
+            "principal_amount": 10000,
+            "roi": 12.5,
+            "status": "pending",
+            <span class="required">field_officer_id</span>: 1,
+            "created_at": "2024-03-20T10:00:00Z"
+        }
+    ],
+    "pagination": {
+        "current_page": 1,
+        "total_pages": 5,
+        "total_items": 50
+    }
+}</pre>
+                    </div>
+
+                    <div class="tab-content" data-tab="schema">
+                        <div class="schema">
+                            <h4>Response Schema</h4>
+                            <pre>{
+    "type": "object",
+    "properties": {
+        "loans": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "borrower_id": {
+                        "type": "integer"
+                    },
+                    "principal_amount": {
+                        "type": "number"
+                    },
+                    "roi": {
+                        "type": "number"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "field_officer_id": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pagination": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method post">POST</span>
+                    <span>/api/v1/loans</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">Create a new loan application</div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab(this, 'request')">Request</div>
+                        <div class="tab" onclick="switchTab(this, 'response')">Response</div>
+                    </div>
+
+                    <div class="tab-content active" data-tab="request">
+                        <pre>curl -X POST "http://localhost:3000/api/v1/loans" \
+    -H "Authorization: Bearer your-jwt-token" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "borrower_id": 1,
+        "principal_amount": 10000,
+        "roi": 12.5,
+        "field_officer_id": 1
+    }'</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method put">PUT</span>
+                    <span>/api/v1/loans/{id}/approve</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">Approve a pending loan</div>
+                    <!-- Add tabs and content -->
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method put">PUT</span>
+                    <span>/api/v1/loans/{id}/disburse</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">Disburse an approved loan</div>
+                    <!-- Add tabs and content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Investments Section -->
+        <section id="investments" class="api-section">
+            <h2 class="section-title">Investments API</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method post">POST</span>
+                    <span>/api/v1/loans/{id}/investments</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">Create a new investment for a loan</div>
+                    <!-- Add tabs and content -->
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method get">GET</span>
+                    <span>/api/v1/loans/{id}/investments</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">List all investments for a loan</div>
+                    <!-- Add tabs and content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Documents Section -->
+        <section id="documents" class="api-section">
+            <h2 class="section-title">Documents API</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method post">POST</span>
+                    <span>/api/v1/loans/{id}/documents</span>
+                    <span class="badge">Multipart</span>
+                </div>
+                <div class="endpoint-content">
+                    <div class="description">Upload a document for a loan</div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab(this, 'request')">Request</div>
+                        <div class="tab" onclick="switchTab(this, 'response')">Response</div>
+                    </div>
+
+                    <div class="tab-content active" data-tab="request">
+                        <pre>curl -X POST "http://localhost:3000/api/v1/loans/1/documents" \
+    -H "Authorization: Bearer your-jwt-token" \
+    -F "file=@/path/to/document.pdf" \
+    -F "type=agreement"</pre>
+
+                        <div class="try-it-out">
+                            <h4>Try it out</h4>
+                            <input type="file" id="document-file">
+                            <select id="document-type">
+                                <option value="agreement">Agreement</option>
+                                <option value="kyc">KYC</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <button onclick="tryUploadDocument()">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <%= javascriptTag("application.js") %>
+    <script>
+        function toggleEndpoint(element) {
+            const endpoint = element.parentElement;
+            const content = endpoint.querySelector('.endpoint-content');
+            
+            if (endpoint.classList.contains('active')) {
+                content.style.maxHeight = '0px';
+                setTimeout(() => {
+                    endpoint.classList.remove('active');
+                }, 300);
+            } else {
+                endpoint.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+
+        function switchTab(element, tab) {
+            const tabsContainer = element.parentElement;
+            const tabContents = tabsContainer.nextElementSibling.parentElement;
+
+            // Update tab buttons
+            tabsContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            // Update tab contents
+            tabContents.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            tabContents.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+        }
+
+        function showSection(sectionId) {
+            // Update sidebar active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.nav-item[onclick="showSection('${sectionId}')"]`).classList.add('active');
+
+            // Update section visibility
+            document.querySelectorAll('.api-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            // Smooth scroll to top of section
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Initialize first section as active
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('borrowers');
+        });
+
+        async function tryBorrowers() {
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/borrowers');
+                const data = await response.json();
+                alert(JSON.stringify(data, null, 2));
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function tryInvestors() {
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/investors');
+                const data = await response.json();
+                alert(JSON.stringify(data, null, 2));
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function tryGetLoans() {
+            try {
+                const status = document.getElementById('loan-status').value;
+                const response = await fetch(`http://localhost:3000/api/v1/loans?status=${status}&page=1`, {
+                    headers: {
+                        'Authorization': 'Bearer your-jwt-token'
+                    }
+                });
+                const data = await response.json();
+                alert(JSON.stringify(data, null, 2));
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function tryUploadDocument() {
+            try {
+                const file = document.getElementById('document-file').files[0];
+                const type = document.getElementById('document-type').value;
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('type', type);
+                const response = await fetch('http://localhost:3000/api/v1/loans/1/documents', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer your-jwt-token'
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                alert(JSON.stringify(data, null, 2));
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html> 

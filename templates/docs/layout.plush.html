@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>API Documentation - Loan Service</title>
+    <style>
+        :root {
+            --bg-dark: #0F172A;
+            --bg-darker: #1E293B;
+            --primary-color: #3B82F6;
+            --text-light: #E2E8F0;
+            --text-gray: #94A3B8;
+            --border-color: #334155;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+        }
+
+        /* Layout */
+        .docs-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-darker);
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            padding: 2rem;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--text-light);
+        }
+
+        /* Navigation */
+        .nav-group {
+            margin-bottom: 2rem;
+        }
+
+        .nav-group-title {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-light);
+        }
+
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 110px;
+            padding: 2rem 3rem;
+            flex: 1;
+        }
+
+        /* Documentation Styles */
+        .docs-section {
+            margin-bottom: 4rem;
+        }
+
+        .docs-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .docs-section h2 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .code-block {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 0.5rem;
+        }
+
+        .method {
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-darker);
+        }
+
+        .method.post {
+            background: #4ade80;
+            color: #15803d;
+        }
+
+        .method.get {
+            background: #a5b4fc;
+            color: #312e81;
+        }
+
+        .method.put {
+            background: #f59e0b;
+            color: #9a3412;
+        }
+
+        .method.delete {
+            background: #ef4444;
+            color: #991b1b;
+        }
+
+        .path {
+            font-weight: 600;
+        }
+
+        .endpoint-container {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .curl-sample {
+            display: none;
+            padding: 1.5rem;
+            position: relative;
+            background: #3F4247;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .curl-sample.active {
+            display: block;
+        }
+
+        .curl-sample pre {
+            margin: 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .curl-sample code {
+            display: block;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #2563EB;
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: #059669;
+        }
+
+        .try-btn {
+            padding: 0.25rem 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-left: auto;
+            transition: all 0.2s;
+        }
+
+        .try-btn:hover {
+            background: #2563EB;
+        }
+
+        /* Add to your existing styles */
+        .copy-feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .guide-box {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .guide-section {
+            margin-bottom: 2rem;
+        }
+
+        .guide-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .note {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            margin-top: 0.5rem;
+        }
+
+        .warning-box {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .warning-box ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="copy-feedback">Copied to clipboard!</div>
+    <div class="docs-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="home-link">
+                    <h1><span class="home-icon">🏠</span>Home Page</h1>
+                </a>
+            </div>
+            <nav>
+                <div class="nav-group">
+                    <div class="nav-group-title">Getting Started</div>
+                    <a href="#introduction" class="nav-item active">Introduction</a>
+                    <a href="#authentication" class="nav-item">Authentication</a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Users</div>
+                    <a href="#borrowers" class="nav-item">Borrowers API</a>
+                    <a href="#investors" class="nav-item">Investors API</a>
+                    <a href="#employees" class="nav-item">Employees API</a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Loans</div>
+                    <a href="#loans" class="nav-item">Loans API</a>
+                    <a href="#investments" class="nav-item">Investments API</a>
+                    <a href="#documents" class="nav-item">Loan Documents API</a>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Loan Lifecycle</div>
+                    <a href="#loan-lifecycle" class="nav-item">Loan Lifecycle Guide</a>
+                </div>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <div class="docs-section" id="introduction">
+                <h1>Introduction</h1>
+                <p>Welcome to the Loan Service API documentation. This API allows you to integrate loan management functionality into your applications.</p>
+                
+                <h2>Base URL</h2>
+                <div class="code-block">
+                    <code>https://api.loanservice.com/v1</code>
+                </div>
+
+                <h2>Request Format</h2>
+                <p>All requests should be made with JSON payloads and include the appropriate headers:</p>
+                <div class="code-block">
+                    <code>
+                        Content-Type: application/json<br>
+                        Authorization: Bearer YOUR_API_KEY
+                    </code>
+                </div>
+            </div>
+
+            <div class="docs-section" id="authentication">
+                <h1>Authentication</h1>
+                <p>All API requests require authentication using Bearer tokens.</p>
+
+                <h2>Getting an API Key</h2>
+                <p>Contact your system administrator to get your API credentials.</p>
+
+                <h2>Using the API Key</h2>
+                <p>Include your API key in all requests using the Authorization header:</p>
+                <div class="code-block">
+                    <code>Authorization: Bearer YOUR_API_KEY</code>
+                </div>
+
+                <div class="warning-box">
+                    <h3>⚠️ Important Security Notes:</h3>
+                    <ul>
+                        <li>Keep your API key secure and never share it</li>
+                        <li>Don't expose the API key in client-side code</li>
+                        <li>Use different API keys for development and production</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="docs-section" id="borrowers">
+                <h1>Borrowers API</h1>
+                
+                <h2>List Borrowers</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/borrowers</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/borrowers" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Get Borrower Details</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/borrowers/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/borrowers/123" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Create Borrower</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <span class="path">/api/v1/borrowers</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/borrowers' \
+                            --header 'Content-Type: application/json' \
+                            --header 'Cookie: _loan_service_session=MTc0MDIxNzcxOXxEWDhFQVFMX2dBQUJFQUVRQUFCYV80QUFBZ1p6ZEhKcGJtY01DUUFIWDJac1lYTm9Yd2RiWFhWcGJuUTRDZ1FBQW50OUJuTjBjbWx1Wnd3T0FBeHlaWEYxWlhOMGIzSmZhV1FHYzNSeWFXNW5EQllBRkRBM01UZ3dZek15WVdSaE5qZ3lPR1UxTXpabXwkWcurv5e7xJiL_fz5cC8oKPzC8k7OJ8VHL7RbsdZDmw==' \
+                            --data-raw '{
+                                "first_name": "John",
+                                "last_name":"Doe",
+                                "email": "john@example.com",
+                                "phone": "+1234567890",
+                                "address": "123 Main St",
+                                "credit_score": 750
+                            }'</code></pre>
+                    </div>
+                </div>
+
+                <h2>Update Borrower</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <span class="path">/api/v1/borrowers/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/borrowers/123" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "John Doe Updated",
+    "email": "john.updated@example.com",
+    "phone": "+1234567890",
+    "address": "456 New St",
+    "credit_score": 780
+}'</code></pre>
+                    </div>
+                </div>
+
+                <h2>Delete Borrower</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/api/v1/borrowers/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X DELETE "https://api.loanservice.com/api/v1/borrowers/123" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="docs-section" id="investors">
+                <h1>Investors API</h1>
+                
+                <h2>Create Investor</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <span class="path">/api/v1/investors</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/investors' \
+                            --header 'Content-Type: application/json' \
+                            --header 'Cookie: _loan_service_session=MTc0MDIxODQzMHxEWDhFQVFMX2dBQUJFQUVRQUFCYV80QUFBZ1p6ZEhKcGJtY01DUUFIWDJac1lYTm9Yd2RiWFhWcGJuUTRDZ1FBQW50OUJuTjBjbWx1Wnd3T0FBeHlaWEYxWlhOMGIzSmZhV1FHYzNSeWFXNW5EQllBRkRBM01UZ3dZek15WVdSaE5qZ3lPR1UxTXpabXwwiIrBvJuu1Sx-YbEhP1ZYb1DEAy3-fjNS-iJS5l0CNg==' \
+                            --data-raw '{
+                                "first_name": "Jane",
+                                "last_name": "Smith",
+                                "email": "jane.smith@example.com",
+                                "phone": "+1234567890",
+                                "kyc_status": "pending",
+                                "kyc_documents": "path/to/documents",
+                                "total_investment_amount": 100000.00
+                            }'</code></pre>
+                    </div>
+                </div>
+
+                <h2>List Investors</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/investors</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/investors"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Get Investor Details</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/investors/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/investors/123"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Update Investor</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <span class="path">/api/v1/investors/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/investors/123" \
+--header 'Content-Type: application/json' \
+--data '{
+    "first_name": "Jane",
+    "last_name": "Smith-Updated",
+    "email": "jane.updated@example.com",
+    "phone": "+1234567891",
+    "kyc_status": "approved",
+    "kyc_documents": "path/to/updated/documents",
+    "total_investment_amount": 150000.00
+}'</code></pre>
+                    </div>
+                </div>
+
+                <h2>Delete Investor</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/api/v1/investors/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X DELETE "https://api.loanservice.com/api/v1/investors/123"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="docs-section" id="employees">
+                <h1>Employees API</h1>
+                
+                <h2>List Employees</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/employees</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/employees" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Get Employee Details</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/employees/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/employees/123" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Create Employee</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <span class="path">/api/v1/employees</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X POST "https://api.loanservice.com/api/v1/employees" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "Michael Johnson",
+    "email": "michael@loanservice.com",
+    "phone": "+1234567890",
+    "department": "Loan Processing",
+    "role": "Loan Officer",
+    "employee_id": "EMP123",
+    "joining_date": "2023-01-15"
+}'</code></pre>
+                    </div>
+                </div>
+
+                <h2>Update Employee</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <span class="path">/api/v1/employees/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/employees/123" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "Michael Johnson",
+    "email": "michael.j@loanservice.com",
+    "phone": "+1234567891",
+    "department": "Risk Assessment",
+    "role": "Senior Loan Officer",
+    "employee_id": "EMP123",
+    "status": "active"
+}'</code></pre>
+                    </div>
+                </div>
+
+                <h2>Delete Employee</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/api/v1/employees/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X DELETE "https://api.loanservice.com/api/v1/employees/123" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="docs-section" id="loans">
+                <h1>Loans API</h1>
+                
+                <h2>List Loans</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/loans</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/loans" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Get Loan Details</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/loans/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/loans/123" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Create Loan</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <span class="path">/api/v1/loans</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans' \
+                            --header 'Content-Type: application/json' \
+                            --header 'Cookie: _loan_service_session=MTc0MDIxOTQ2MXxEWDhFQVFMX2dBQUJFQUVRQUFCYV80QUFBZ1p6ZEhKcGJtY01DUUFIWDJac1lYTm9Yd2RiWFhWcGJuUTRDZ1FBQW50OUJuTjBjbWx1Wnd3T0FBeHlaWEYxWlhOMGIzSmZhV1FHYzNSeWFXNW5EQllBRkRBM01UZ3dZek15WVdSaE5qZ3lPR1UxTXpabXwwBrY0FeqooqPyCuHEI7ZlX6kYjtrlcSCX1gngPsEbaQ==' \
+                            --data '{
+                                "borrower_id": 1,
+                                "principal_amount": 50000.00,
+                                "rate": 12.50,
+                                "roi": 8.50,
+                                "status": "proposed"
+                            }'</code></pre>
+                    </div>
+                </div>
+
+                <h2>Approve Loan</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <span class="path">/api/v1/loans/{id}/approve</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/123/approve" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: multipart/form-data" \
+-F "field_validator_id=EMP456" \
+-F "approval_date=2024-03-21" \
+-F "verification_photo=@/path/to/photo.jpg" \
+-F "remarks=Borrower verification completed successfully"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Disburse Loan</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <span class="path">/api/v1/loans/{id}/disburse</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/123/disburse" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: multipart/form-data" \
+-F "field_officer_id=EMP789" \
+-F "disbursement_date=2024-03-22" \
+-F "signed_agreement=@/path/to/agreement.pdf" \
+-F "disbursement_method=bank_transfer" \
+-F "bank_details={
+    \"account_number\": \"1234567890\",
+    \"bank_name\": \"Example Bank\",
+    \"ifsc_code\": \"EXBK0001234\"
+}"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="docs-section" id="investments">
+                <h1>Investments API</h1>
+                
+                <h2>Create Investment</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <span class="path">/api/v1/loans/{id}/investments</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/123/investments" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "investor_id": "INV789",
+    "amount": 25000,
+    "investment_date": "2024-03-21"
+}'</code></pre>
+                    </div>
+                </div>
+
+                <h2>List Investments for Loan</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/loans/{id}/investments</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/loans/123/investments" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+
+                <h2>Get Investment Details</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/investments/{id}</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/investments/789" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="docs-section" id="documents">
+                <h1>Loan Documents API</h1>
+                
+                <h2>Upload Document</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <span class="path">/api/v1/loans/{id}/documents</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/123/documents" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: multipart/form-data" \
+-F "document=@/path/to/document.pdf" \
+-F "type=identity_proof" \
+-F "description=Identity verification document" \
+-F "metadata={\"issuing_authority\":\"Government\",\"expiry_date\":\"2025-12-31\"}"</code></pre>
+                    </div>
+                </div>
+
+                <h2>List Documents</h2>
+                <div class="endpoint-container">
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <span class="path">/api/v1/loans/{id}/documents</span>
+                        <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                    </div>
+                    <div class="curl-sample">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/loans/123/documents" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="docs-section" id="loan-lifecycle">
+                <h1>Step by Step Guide: How to Process a Loan</h1>
+                
+                <div class="guide-section">
+                    <h2>Prerequisites</h2>
+                    <div class="guide-box">
+                        <p>Before starting, make sure you have:</p>
+                        <ul>
+                            <li>Your API key for authentication</li>
+                            <li>Borrower's personal information</li>
+                            <li>Required documents ready to upload</li>
+                        </ul>
+                    </div>
+
+                    <h2>Phase 1: Initial Setup</h2>
+                    <div class="guide-box">
+                        <h3>Step 1: Create a Borrower Account</h3>
+                        <p>First, register the borrower in the system</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method post">POST</span>
+                                <span class="path">/api/v1/borrowers</span>
+                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/borrowers" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "address": "123 Main St",
+    "credit_score": 750
+}'</code></pre>
+                            </div>
+                        </div>
+                        <p class="note">📝 Save the borrower_id from the response - you'll need it for creating the loan</p>
+                    </div>
+
+                    <h2>Phase 2: Loan Creation</h2>
+                    <div class="guide-box">
+                        <h3>Step 2: Create a Loan Application</h3>
+                        <p>Create a loan using the borrower_id from Step 1</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method post">POST</span>
+                                <span class="path">/api/v1/loans</span>
+                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "borrower_id": "BORROWER_ID_FROM_STEP_1",
+    "principal_amount": 50000,
+    "rate": 12.5,
+    "roi": 8.5,
+    "term_months": 24
+}'</code></pre>
+                            </div>
+                        </div>
+                        <p class="note">📝 Save the loan_id from the response - you'll need it for all following steps</p>
+                    </div>
+
+                    <h2>Phase 3: Document Collection</h2>
+                    <div class="guide-box">
+                        <h3>Step 3: Upload Required Documents</h3>
+                        <p>Upload all necessary documents for the loan</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method post">POST</span>
+                                <span class="path">/api/v1/loans/{loan_id}/documents</span>
+                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/LOAN_ID/documents" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: multipart/form-data" \
+-F "document=@/path/to/document.pdf" \
+-F "type=identity_proof" \
+-F "description=Identity verification document"</code></pre>
+                            </div>
+                        </div>
+                        <p class="note">⚠️ Repeat this step for each required document (ID proof, income proof, etc.)</p>
+                    </div>
+
+                    <h2>Phase 4: Loan Approval</h2>
+                    <div class="guide-box">
+                        <h3>Step 4: Get Loan Approved</h3>
+                        <p>Field validator must visit borrower and submit approval</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method put">PUT</span>
+                                <span class="path">/api/v1/loans/{loan_id}/approve</span>
+                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/LOAN_ID/approve" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: multipart/form-data" \
+-F "field_validator_id=EMP456" \
+-F "approval_date=2024-03-21" \
+-F "verification_photo=@/path/to/photo.jpg" \
+-F "remarks=Borrower verification completed successfully"</code></pre>
+                            </div>
+                        </div>
+                        <p class="note">✅ After approval, the loan becomes visible to investors</p>
+                    </div>
+
+                    <h2>Phase 5: Investment Collection</h2>
+                    <div class="guide-box">
+                        <h3>Step 5: Collect Investments</h3>
+                        <p>Multiple investors can invest in the loan</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method post">POST</span>
+                                <span class="path">/api/v1/loans/{loan_id}/investments</span>
+                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/LOAN_ID/investments" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "investor_id": "INV789",
+    "amount": 25000,
+    "investment_date": "2024-03-21"
+}'</code></pre>
+                            </div>
+                        </div>
+                        <p class="note">⚠️ Repeat this step until total investment equals loan amount</p>
+
+                        <h3>Step 5.1: Check Investment Status</h3>
+                        <p>Verify if the loan is fully funded</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method get">GET</span>
+                                <span class="path">/api/v1/loans/{loan_id}/investments/status</span>
+                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl -X GET "https://api.loanservice.com/api/v1/loans/LOAN_ID/investments/status" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json"</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>Phase 6: Loan Disbursement</h2>
+                    <div class="guide-box">
+                        <h3>Step 6: Disburse the Loan</h3>
+                        <p>Final step: disburse money to borrower</p>
+                        <div class="endpoint-container">
+                            <div class="endpoint">
+                                <span class="method put">PUT</span>
+                                <span class="path">/api/v1/loans/{loan_id}/disburse</span>
+                                <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
+                            </div>
+                            <div class="curl-sample">
+                                <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                                <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/LOAN_ID/disburse" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: multipart/form-data" \
+-F "field_officer_id=EMP789" \
+-F "disbursement_date=2024-03-22" \
+-F "signed_agreement=@/path/to/agreement.pdf" \
+-F "disbursement_method=bank_transfer" \
+-F "bank_details={
+    \"account_number\": \"1234567890\",
+    \"bank_name\": \"Example Bank\",
+    \"ifsc_code\": \"EXBK0001234\"
+}"</code></pre>
+                            </div>
+                        </div>
+                        <p class="note">🎉 Loan process complete!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        function toggleCurl(btn) {
+            const container = btn.closest('.endpoint-container');
+            const curlSample = container.querySelector('.curl-sample');
+            curlSample.classList.toggle('active');
+        }
+
+        async function copyToClipboard(btn) {
+            try {
+                // Get the code element and its text content
+                const codeBlock = btn.closest('.curl-sample').querySelector('code');
+                let textToCopy = codeBlock.innerText || codeBlock.textContent;
+                
+                // Clean up the text (remove extra spaces and format nicely)
+                textToCopy = textToCopy
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line)
+                    .join('\n');
+
+                // Create a temporary textarea element
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                
+                // Select and copy the text
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                // Show feedback
+                const feedback = document.querySelector('.copy-feedback');
+                feedback.style.display = 'block';
+                feedback.style.opacity = '1';
+                
+                // Update button
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    feedback.style.opacity = '0';
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                    
+                    setTimeout(() => {
+                        feedback.style.display = 'none';
+                    }, 300);
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                // Show error feedback
+                const feedback = document.querySelector('.copy-feedback');
+                feedback.textContent = 'Failed to copy!';
+                feedback.style.background = '#ef4444';
+                feedback.style.display = 'block';
+                feedback.style.opacity = '1';
+                
+                setTimeout(() => {
+                    feedback.style.opacity = '0';
+                    setTimeout(() => {
+                        feedback.style.display = 'none';
+                        feedback.textContent = 'Copied to clipboard!';
+                        feedback.style.background = 'var(--primary-color)';
+                    }, 300);
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html> 

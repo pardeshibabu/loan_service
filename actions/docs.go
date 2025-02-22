@@ -2,17 +2,13 @@ package actions
 
 import (
 	"net/http"
-	"path/filepath"
 
 	"github.com/gobuffalo/buffalo"
 )
 
-// DocsHandler serves the Swagger UI
+// DocsHandler serves the API documentation
 func DocsHandler(c buffalo.Context) error {
-	return c.Render(200, r.HTML("docs/swagger.html"))
-}
-
-// DocsFS returns the docs filesystem
-func DocsFS() http.FileSystem {
-	return http.Dir(filepath.Join("docs"))
+	// Set layout to empty string to prevent using application layout
+	c.Set("layout", "")
+	return c.Render(http.StatusOK, r.HTML("docs/layout.plush.html"))
 }

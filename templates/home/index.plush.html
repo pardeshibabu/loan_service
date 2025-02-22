@@ -1,64 +1,142 @@
-<header>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-1 col-sm-2 col-xs-2 logo">
-        <a href="<%= rootPath() %>"><img src="<%= rootPath() %>assets/images/logo.svg" alt=""></a>
-      </div>
-      <div class="col-md-9 col-sm-9 col-xs-10 titles">
-        <h1><%= t("welcome_greeting") %></h1>
-        <h2>
-          <a href="https://github.com/gobuffalo/buffalo"><i class="fab fa-github" aria-hidden="true"></i> https://github.com/gobuffalo/buffalo</a>
-        </h2>
-        <h2 class="documentation">
-          <a href="http://gobuffalo.io/"><i class="fa fa-book" aria-hidden="true"></i> Documentation</a>
-        </h2>
-      </div>
+
+<section class="features">
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3>Loan Analysis</h3>
+            <p>Our advanced AI provides precise loan analysis, giving you a competitive edge.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Our Guarantee</h3>
+            <p>Our Personal Pledge To You. YOU WIN! Or we work for free until you do.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Verified Record</h3>
+            <p>All our picks are verified on-chain, ensuring transparency and trust.</p>
+        </div>
     </div>
-  </div>
+</section>
 
-</header>
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="subtitle">
-      <div class="container">
-        <h3>Defined Routes</h3>
-      </div>
+<div class="hero">
+    <div class="hero-content">
+        <div class="badge">
+            <span class="icon">💰</span> Smart Loan Management
+        </div>
+        <h1>The AI That Powers Modern<br>Loan Management</h1>
+        <p>Top financial experts and veterans train our advanced AI, giving you<br>the ultimate tool for predictive loan analysis.</p>
     </div>
-    <div class="table-responsive">
-      <table class="table table-striped">
-        <thead>
-          <tr text-align="left">
-            <th class="centered">METHOD</th>
-            <th>PATH</th>
-            <th>NAME</th>
-            <th>HANDLER</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          <%= for (r) in routes { %>
-            <tr>
-              <td class="centered">
-                <%= r.Method %>
-              </td>
-              <td>
-                <%= if (r.Method != "GET" || r.Path ~= "{") { %><%=
-                  r.Path %><%
-                } else { %><%=
-                  linkTo(r.Path, {body: r.Path}) %><%
-                } %>
-              </td>
-              <td>
-                <%= r.PathName %>
-              </td>
-              <td><code><%= r.HandlerName %></code></td>
-            </tr>
-          <% } %>
-
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div>
-<div class="foot"> <span> Powered by <a href="http://gobuffalo.io/">gobuffalo.io</a></span> </div>
+
+<section class="stats">
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="stat-number">$100M+</div>
+            <div class="stat-label">Loans Processed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">10,000+</div>
+            <div class="stat-label">Happy Customers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Uptime</div>
+        </div>
+    </div>
+</section>
+
+/* Features Section */
+.features {
+    padding: 4rem 2rem;
+    background: var(--bg-dark);
+}
+
+.features-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: stretch;
+    gap: 2rem;
+}
+
+.feature-card {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--border-color);
+    padding: 2rem;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.feature-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+.loan-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.stat {
+    background: rgba(59, 130, 246, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.guarantee-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-top: auto;
+}
+
+.stats-preview {
+    margin-top: auto;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: var(--primary-color);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 1024px) {
+    .features-grid {
+        flex-wrap: wrap;  /* Allow wrapping on smaller screens */
+        justify-content: center;
+    }
+
+    .feature-card {
+        flex: 0 1 calc(50% - 2rem);  /* Two cards per row */
+    }
+}
+
+@media (max-width: 768px) {
+    .feature-card {
+        flex: 0 1 100%;  /* One card per row */
+    }
+}

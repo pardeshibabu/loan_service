@@ -721,13 +721,12 @@
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X PUT "https://api.loanservice.com/api/v1/loans/123/approve" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: multipart/form-data" \
--F "field_validator_id=EMP456" \
--F "approval_date=2024-03-21" \
--F "verification_photo=@/path/to/photo.jpg" \
--F "remarks=Borrower verification completed successfully"</code></pre>
+                        <pre><code>curl --location --request PUT 'http://0.0.0.0:3000/api/v1/loans/2/approve' \
+                            --header 'Content-Type: application/json' \
+                            --data '{
+                                "field_validator_id": 3,
+                                "validation_proof_url": "https://wallpapers.com/images/high/bengal-tiger-8k-phone-40rpc4d75rehel96.webp"
+                            }'</code></pre>
                     </div>
                 </div>
 
@@ -775,14 +774,13 @@
                 <div class="endpoint-container">
                     <div class="endpoint">
                         <span class="method get">GET</span>
-                        <span class="path">/api/v1/loans/{id}/investments</span>
+                        <span class="path">/api/v1/investments</span>
                         <button class="try-btn" onclick="toggleCurl(this)">Try it</button>
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/loans/123/investments" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json"</code></pre>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/investments' \
+                            --header 'Content-Type: application/json'</code></pre>
                     </div>
                 </div>
 
@@ -795,9 +793,9 @@
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X GET "https://api.loanservice.com/api/v1/investments/789" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: application/json"</code></pre>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/investments/2' \
+                            --header 'Authorization: Bearer YOUR_API_KEY' \
+                            --header 'Content-Type: application/json'</code></pre>
                     </div>
                 </div>
             </div>
@@ -814,13 +812,14 @@
                     </div>
                     <div class="curl-sample">
                         <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
-                        <pre><code>curl -X POST "https://api.loanservice.com/api/v1/loans/123/documents" \
--H "Authorization: Bearer YOUR_API_KEY" \
--H "Content-Type: multipart/form-data" \
--F "document=@/path/to/document.pdf" \
--F "type=identity_proof" \
--F "description=Identity verification document" \
--F "metadata={\"issuing_authority\":\"Government\",\"expiry_date\":\"2025-12-31\"}"</code></pre>
+                        <pre><code>curl --location 'http://0.0.0.0:3000/api/v1/loans/1/documents' \
+                            --header 'Content-Type: application/json' \
+                            --data '{
+                                "loan_id": 1,
+                                "document_type": "agreement_letter",
+                                "file_url": "https://wallpapers.com/images/high/bengal-tiger-8k-phone-40rpc4d75rehel96.webp",
+                                "uploaded_by_id": 1
+                            }'</code></pre>
                     </div>
                 </div>
 

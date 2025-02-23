@@ -10,20 +10,23 @@ import (
 	"github.com/gobuffalo/pop/v6"
 )
 
-// InvestmentsList gets all investments for a loan
+// InvestmentsList gets all investments
 func InvestmentsList(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	investments := &[]models.Investment{}
 
-	// Get investments for specific loan
-	q := tx.Where("loan_id = ?", c.Param("id"))
-	q = tx.PaginateFromParams(c.Params())
+	// Build query with pagination and eager loading
+	q := tx.PaginateFromParams(c.Params())
+	q = q.Eager("Loan", "Investor")
 
+	// Retrieve all Investments from the DB
 	if err := q.All(investments); err != nil {
 		return err
 	}
 
+	// Add pagination info to response
 	c.Set("pagination", q.Paginator)
+
 	return c.Render(http.StatusOK, r.JSON(investments))
 }
 

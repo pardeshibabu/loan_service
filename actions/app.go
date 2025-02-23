@@ -91,9 +91,10 @@ func App() *buffalo.App {
 		api.PUT("/loans/{id}/approve", LoansApprove)
 		api.PUT("/loans/{id}/disburse", LoansDisburse)
 
-		api.POST("/loans/{id}/investments", InvestmentsCreate)
-		api.GET("/loans/{id}/investments", InvestmentsList)
+		// Investment routes
+		api.GET("/investments", InvestmentsList)
 		api.GET("/investments/{id}", InvestmentsShow)
+		api.POST("/loans/{id}/investments", InvestmentsCreate)
 
 		api.POST("/loans/{id}/documents", DocumentsCreate)
 		api.GET("/loans/{id}/documents", DocumentsList)

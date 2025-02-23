@@ -1,0 +1,735 @@
+{
+	"info": {
+		"_postman_id": "bc3c09ec-3159-4964-9c50-6d59592bcab9",
+		"name": "Loan Service API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "41643807"
+	},
+	"item": [
+		{
+			"name": "Borrowers",
+			"item": [
+				{
+					"name": "{{BASE_URL}}/api/v1/borrowers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/borrowers"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/borrowers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\":\"Doe\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"+1234567890\",\n    \"address\": \"123 Main St\",\n    \"credit_score\": 750\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/borrowers"
+					},
+					"response": []
+				},
+				{
+					"name": "http://0.0.0.0:3000/api/v1/borrowers?search=1&field=id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/v1/borrowers?search=1&field=id",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"borrowers"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "1"
+								},
+								{
+									"key": "field",
+									"value": "id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://0.0.0.0:3000/api/v1/borrowers",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true,
+							"connection": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://0.0.0.0:3000/api/v1/borrowers"
+					},
+					"response": []
+				},
+				{
+					"name": "http://0.0.0.0:3000/api/v1/borrowers?page=1&per_page=10&search=John&field=first_name&sort=created_at&order=desc",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": " application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/v1/borrowers?page=1&per_page=10&search=John&field=first_name&sort=created_at&order=desc",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"borrowers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								},
+								{
+									"key": "search",
+									"value": "John"
+								},
+								{
+									"key": "field",
+									"value": "first_name"
+								},
+								{
+									"key": "sort",
+									"value": "created_at"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/borrowers/3",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/borrowers/3"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "KYC APIs",
+			"item": [
+				{
+					"name": "Update Investor KYC Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"status\": \"approved\", \"documents\": [\"passport.pdf\", \"utility_bill.pdf\"], \"reviewer_id\": 1, \"comments\": \"All documents verified\"}"
+						},
+						"url": "{{BASE_URL}}/investors/1/kyc"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Investor KYC History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT_TOKEN}}"
+							}
+						],
+						"url": "{{BASE_URL}}/investors/1/kyc/history"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "https://api.loanservice.com/api/v1/auth/generate-key",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"email\": \"your.email@company.com\",\n\"password\": \"your_password\",\n\"client_name\": \"My Application\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://api.loanservice.com/api/v1/auth/generate-key"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "loan",
+			"item": [
+				{
+					"name": "{{BASE_URL}}/api/v1/loans",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"borrower_id\": 1,\n    \"principal_amount\": 50000.00,\n    \"rate\": 12.50,\n    \"roi\": 8.50,\n    \"status\": \"proposed\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/loans"
+					},
+					"response": []
+				},
+				{
+					"name": "http://0.0.0.0:3000/api/v1/loans/2/approve",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"field_validator_id\": 3,\n    \"validation_proof_url\": \"https://wallpapers.com/images/high/bengal-tiger-8k-phone-40rpc4d75rehel96.webp\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://0.0.0.0:3000/api/v1/loans/2/approve"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/loans/1/investments",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"investor_id\": 1,\n\"amount\": 50000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/loans/1/investments"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/loans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/loans"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/loans/1/disburse",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"field_officer_id\": 1,\n    \"signed_agreement_url\": \"https://wallpapers.com/images/high/bengal-tiger-8k-phone-40rpc4d75rehel96.webp\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/loans/1/disburse"
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/loans/1/documents",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"loan_id\": 1,\n    \"document_type\": \"agreement_letter\",\n    \"file_url\": \"https://wallpapers.com/images/high/bengal-tiger-8k-phone-40rpc4d75rehel96.webp\",\n    \"uploaded_by_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/loans/1/documents"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/loans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/loans"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/loans/1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/loans/1"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/investments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/investments"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/investments/2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/investments/2"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/investments/2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/investments/2"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/loans/1/documents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/loans/1/documents"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Investors",
+			"item": [
+				{
+					"name": "{{BASE_URL}}/api/v1/investors",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Smith\",\n    \"email\": \"jane.smith@example.com\",\n    \"phone\": \"+1234567890\",\n    \"kyc_status\": \"pending\",\n    \"kyc_documents\": \"path/to/documents\",\n    \"total_investment_amount\": 100000.00\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/investors"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/investors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/investors"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/investors/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{BASE_URL}}/api/v1/investors/1"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/investors/1",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"first_name\": \"Jane-updated\",\n\"last_name\": \"Smith-Updated\",\n\"email\": \"jane.updated@example.com\",\n\"phone\": \"+1234567891\",\n\"kyc_status\": \"approved\",\n\"kyc_documents\": \"path/to/updated/documents\",\n\"total_investment_amount\": 150000.00\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/investors/1"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/investors/2",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{BASE_URL}}/api/v1/investors/2"
+					},
+					"response": []
+				},
+				{
+					"name": "http://0.0.0.0:3000/api/v1/investors",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "_loan_service_session=MTc0MDIxODQzMHxEWDhFQVFMX2dBQUJFQUVRQUFCYV80QUFBZ1p6ZEhKcGJtY01DUUFIWDJac1lYTm9Yd2RiWFhWcGJuUTRDZ1FBQW50OUJuTjBjbWx1Wnd3T0FBeHlaWEYxWlhOMGIzSmZhV1FHYzNSeWFXNW5EQllBRkRBM01UZ3dZek15WVdSaE5qZ3lPR1UxTXpabXwwiIrBvJuu1Sx-YbEhP1ZYb1DEAy3-fjNS-iJS5l0CNg=="
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"first_name\": \"Jane\",\n\"last_name\": \"Smith\",\n\"email\": \"jane.smith@example.com\",\n\"phone\": \"+1234567890\",\n\"kyc_status\": \"pending\",\n\"kyc_documents\": \"path/to/documents\",\n\"total_investment_amount\": 100000.00\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://0.0.0.0:3000/api/v1/investors"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Employees",
+			"item": [
+				{
+					"name": "http://0.0.0.0:3000/api/v1/employees",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Field\",\n    \"last_name\": \"Validator\",\n    \"email\": \"fieldvalidator@example.com\",\n    \"role\": \"field_validator\",\n    \"status\": \"active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://0.0.0.0:3000/api/v1/employees"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/employees",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/employees"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/employees/1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/employees/4"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/employees/4",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Update\",\n    \"last_name\": \"Update-Validator\",\n    \"email\": \"fieldvalidator@example.com\",\n    \"role\": \"field_validator\",\n    \"status\": \"active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{BASE_URL}}/api/v1/employees/4"
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/api/v1/employees/4",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_API_KEY"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{BASE_URL}}/api/v1/employees/4"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:3000/api/v1"
+		},
+		{
+			"key": "JWT_TOKEN",
+			"value": "your-jwt-token"
+		}
+	]
+}

@@ -61,6 +61,7 @@ func App() *buffalo.App {
 		app.Use(translations())
 
 		app.GET("/", HomeHandler)
+		app.GET("/loan-lifecycle", LoanLifecycleHandler)
 
 		// API Group without CSRF
 		api := app.Group("/api/v1")

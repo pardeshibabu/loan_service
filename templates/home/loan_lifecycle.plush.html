@@ -1,0 +1,196 @@
+<div class="loan-lifecycle">
+    <div class="lifecycle-header">
+        <h1>Loan Lifecycle Management</h1>
+        <p>Understanding the complete journey of a loan from proposal to disbursement</p>
+    </div>
+
+    <div class="lifecycle-steps">
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3>Loan Proposal</h3>
+                <p>Borrower submits loan application with required documents</p>
+                <div class="step-details">
+                    <ul>
+                        <li>Basic information collection</li>
+                        <li>Document submission</li>
+                        <li>Initial screening</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3>Field Validation</h3>
+                <p>Field validator verifies borrower details and documents</p>
+                <div class="step-details">
+                    <ul>
+                        <li>Document verification</li>
+                        <li>Field visit</li>
+                        <li>Validation report</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3>Loan Approval</h3>
+                <p>Loan gets approved based on validation results</p>
+                <div class="step-details">
+                    <ul>
+                        <li>Risk assessment</li>
+                        <li>Credit scoring</li>
+                        <li>Terms finalization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h3>Investment Phase</h3>
+                <p>Investors fund the approved loan</p>
+                <div class="step-details">
+                    <ul>
+                        <li>Investment allocation</li>
+                        <li>Fund collection</li>
+                        <li>Investment tracking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <h3>Disbursement</h3>
+                <p>Loan amount is disbursed to borrower</p>
+                <div class="step-details">
+                    <ul>
+                        <li>Agreement signing</li>
+                        <li>Fund transfer</li>
+                        <li>Documentation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.loan-lifecycle {
+    padding: 4rem 2rem;
+    background: var(--bg-dark);
+    min-height: 100vh;
+}
+
+.lifecycle-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.lifecycle-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.lifecycle-header p {
+    color: var(--text-gray);
+    font-size: 1.2rem;
+}
+
+.lifecycle-steps {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.step {
+    display: flex;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.step:not(:last-child):after {
+    content: '';
+    position: absolute;
+    left: 2rem;
+    top: 4rem;
+    bottom: -3rem;
+    width: 2px;
+    background: var(--primary-color);
+}
+
+.step-number {
+    width: 4rem;
+    height: 4rem;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    flex-shrink: 0;
+    margin-right: 2rem;
+}
+
+.step-content {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--border-color);
+    padding: 2rem;
+    border-radius: 16px;
+    flex-grow: 1;
+}
+
+.step-content h3 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.step-content p {
+    color: var(--text-gray);
+    margin-bottom: 1rem;
+}
+
+.step-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.step-details li {
+    color: var(--text-gray);
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.step-details li:before {
+    content: '•';
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+}
+
+@media (max-width: 768px) {
+    .step {
+        flex-direction: column;
+    }
+
+    .step-number {
+        margin-bottom: 1rem;
+    }
+
+    .step:not(:last-child):after {
+        left: 2rem;
+        top: 4rem;
+        height: calc(100% + 3rem);
+    }
+}
+</style> 

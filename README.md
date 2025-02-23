@@ -1,6 +1,74 @@
 # Loan Service
 
-A loan management system that handles the lifecycle of loans from proposal to disbursement.
+A Buffalo-based loan management system with Docker support.
+
+## Prerequisites
+
+- Docker
+- Docker Compose
+
+## Quick Start
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd loan_service
+```
+
+2. Start the application using Docker:
+```bash
+docker-compose up -d
+```
+
+The application will be available at http://localhost:3000
+
+## Environment Variables
+
+The following environment variables can be configured in docker-compose.yml:
+
+- `GO_ENV`: Application environment (development/production)
+- `DB_HOST`: Database host
+- `DB_USER`: Database user
+- `DB_PASSWORD`: Database password
+- `DB_NAME`: Database name
+- `SESSION_SECRET`: Secret key for session encryption
+- `PORT`: Application port (default: 3000)
+
+## API Documentation
+
+API documentation is available at http://localhost:3000/docs
+
+## Database Migrations
+
+Migrations are automatically run when the container starts. To manually run migrations:
+
+```bash
+docker-compose exec app ./app migrate
+```
+
+## Development
+
+To rebuild the application after changes:
+```bash
+docker-compose down
+docker-compose up -d --build
+```
+
+## Project Structure
+
+```
+loan_service/
+├── actions/         # HTTP handlers
+├── models/         # Database models
+├── migrations/     # Database migrations
+├── templates/      # HTML templates
+├── public/         # Static files
+└── docker/         # Docker configuration
+```
+
+## License
+
+[License Type]
 
 ## Problem Statement
 

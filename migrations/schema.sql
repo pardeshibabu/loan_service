@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 9.2.0, for macos14.7 (arm64)
 --
--- Host: 127.0.0.1    Database: loan_service_development
+-- Host: 127.0.0.1    Database: lsd
 -- ------------------------------------------------------
 -- Server version	9.2.0
 
@@ -24,16 +24,16 @@ DROP TABLE IF EXISTS `borrowers`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `borrowers` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `id_number` varchar(50) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `address` text,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `address` text NOT NULL,
+  `credit_score` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_number` (`id_number`)
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -46,11 +46,12 @@ DROP TABLE IF EXISTS `documents`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `documents` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `loan_id` bigint NOT NULL,
-  `document_type` enum('validation_proof','agreement_letter','signed_agreement','kyc') NOT NULL,
+  `document_type` enum('kyc','validation_proof','agreement_letter','signed_agreement') NOT NULL,
   `file_url` text NOT NULL,
   `uploaded_by_id` bigint NOT NULL,
-  `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `loan_id` (`loan_id`),
   KEY `uploaded_by_id` (`uploaded_by_id`),
@@ -68,16 +69,15 @@ DROP TABLE IF EXISTS `employees`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employees` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `employee_id` varchar(50) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `role` enum('field_validator','field_officer','admin') NOT NULL,
-  `status` enum('active','inactive') DEFAULT 'active',
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `role` enum('field_officer','field_validator','admin') NOT NULL,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `employee_id` (`employee_id`)
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -90,13 +90,13 @@ DROP TABLE IF EXISTS `investments`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `investments` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `loan_id` bigint NOT NULL,
   `investor_id` bigint NOT NULL,
   `amount` decimal(15,2) NOT NULL,
-  `agreement_letter_url` text,
-  `status` enum('active','completed','cancelled') DEFAULT 'active',
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `status` enum('active','completed','cancelled') NOT NULL DEFAULT 'active',
+  `investment_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `loan_id` (`loan_id`),
   KEY `investor_id` (`investor_id`),
@@ -114,39 +114,65 @@ DROP TABLE IF EXISTS `investors`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `investors` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `kyc_status` enum('pending','approved','rejected') DEFAULT 'pending',
+  `phone` varchar(20) NOT NULL,
+  `kyc_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `kyc_documents` text,
-  `total_investment_amount` decimal(15,2) DEFAULT '0.00',
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `loan_state_history`
+-- Table structure for table `kyc_histories`
 --
 
-DROP TABLE IF EXISTS `loan_state_history`;
+DROP TABLE IF EXISTS `kyc_histories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `loan_state_history` (
+CREATE TABLE `kyc_histories` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `investor_id` bigint NOT NULL,
+  `from_status` enum('pending','approved','rejected') NOT NULL,
+  `to_status` enum('pending','approved','rejected') NOT NULL,
+  `reviewer_id` bigint NOT NULL,
+  `comments` text,
+  `reviewed_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `investor_id` (`investor_id`),
+  KEY `reviewer_id` (`reviewer_id`),
+  CONSTRAINT `kyc_histories_ibfk_1` FOREIGN KEY (`investor_id`) REFERENCES `investors` (`id`),
+  CONSTRAINT `kyc_histories_ibfk_2` FOREIGN KEY (`reviewer_id`) REFERENCES `employees` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `loan_state_histories`
+--
+
+DROP TABLE IF EXISTS `loan_state_histories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `loan_state_histories` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `loan_id` bigint NOT NULL,
   `changed_by_id` bigint NOT NULL,
-  `from_status` varchar(20) DEFAULT NULL,
-  `to_status` varchar(20) NOT NULL,
+  `from_status` enum('proposed','approved','invested','disbursed') DEFAULT NULL,
+  `to_status` enum('proposed','approved','invested','disbursed') NOT NULL,
   `changed_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `loan_id` (`loan_id`),
   KEY `changed_by_id` (`changed_by_id`),
-  CONSTRAINT `loan_state_history_ibfk_1` FOREIGN KEY (`loan_id`) REFERENCES `loans` (`id`),
-  CONSTRAINT `loan_state_history_ibfk_2` FOREIGN KEY (`changed_by_id`) REFERENCES `employees` (`id`)
+  CONSTRAINT `loan_state_histories_ibfk_1` FOREIGN KEY (`loan_id`) REFERENCES `loans` (`id`),
+  CONSTRAINT `loan_state_histories_ibfk_2` FOREIGN KEY (`changed_by_id`) REFERENCES `employees` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -159,11 +185,13 @@ DROP TABLE IF EXISTS `loans`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `loans` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `borrower_id` bigint NOT NULL,
   `principal_amount` decimal(15,2) NOT NULL,
   `rate` decimal(5,2) NOT NULL,
   `roi` decimal(5,2) NOT NULL,
-  `status` enum('proposed','approved','invested','disbursed') DEFAULT 'proposed',
+  `status` enum('proposed','approved','invested','disbursed') NOT NULL DEFAULT 'proposed',
   `approval_date` datetime DEFAULT NULL,
   `field_validator_id` bigint DEFAULT NULL,
   `validation_proof_url` text,
@@ -171,8 +199,6 @@ CREATE TABLE `loans` (
   `field_officer_id` bigint DEFAULT NULL,
   `signed_agreement_url` text,
   `agreement_letter_url` text,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `borrower_id` (`borrower_id`),
   KEY `field_validator_id` (`field_validator_id`),
@@ -230,4 +256,4 @@ CREATE TABLE `schema_migration` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-21  4:31:47
+-- Dump completed on 2025-02-23 13:33:32

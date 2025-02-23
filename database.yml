@@ -1,6 +1,6 @@
 development:
   dialect: mysql
-  database: loan_service_development
+  database: lsd
   user: root
   password: root@123
   host: 127.0.0.1
@@ -9,18 +9,18 @@ development:
 
 test:
   dialect: mysql
-  database: loan_service_test
+  database: lsd
   user: root
   password: root@123
-  host: 127.0.0.1
+  host: db
   port: 3306
   pool: 5
 
 production:
   dialect: mysql
-  database: loan_service_production
+  database: lsd
   user: root
   password: root@123
-  host: 127.0.0.1
+  host: db
   port: 3306
   pool: 5

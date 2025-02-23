@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - loan_network
+    environment:
+      - GO_ENV=development
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root@123
+      - DB_NAME=lsd
+      - ADDR=0.0.0.0
+      - PORT=3000
+      - SESSION_SECRET=your-secret-key-here
+      - SSL_REDIRECT=false
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    networks:
+      - loan_network
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root@123
+      - MYSQL_DATABASE=lsd
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot@123"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+networks:
+  loan_network:
+    driver: bridge
+
+volumes:
+  mysql_data: 

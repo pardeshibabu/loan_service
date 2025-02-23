@@ -1,44 +1,47 @@
 # This is a multi-stage Dockerfile and requires >= Docker 17.05
 # https://docs.docker.com/engine/userguide/eng-image/multistage-build/
-FROM gobuffalo/buffalo:v0.18.14 as builder
+FROM golang:1.24-alpine AS builder
 
-ENV GOPROXY http://proxy.golang.org
+# Install build dependencies
+RUN apk add --no-cache gcc musl-dev
 
-RUN mkdir -p /src/loan_service
-WORKDIR /src/loan_service
+# Install buffalo
+RUN go install github.com/gobuffalo/cli/cmd/buffalo@latest
 
-# this will cache the npm install step, unless package.json changes
-ADD package.json .
-ADD yarn.lock .yarnrc.yml ./
-RUN mkdir .yarn
-COPY .yarn .yarn
-RUN yarn install
-# Copy the Go Modules manifests
-COPY go.mod go.mod
-COPY go.sum go.sum
-# cache deps before building and copying source so that we don't need to re-download as much
-# and so that source changes don't invalidate our downloaded layer
+WORKDIR /app
+
+# Copy the entire project
+COPY . .
+
+# Download dependencies
 RUN go mod download
 
-ADD . .
-RUN buffalo build --static -o /bin/app
+# Build the Buffalo application
+# -k flag skips asset compilation
+RUN buffalo build -k -o bin/app
 
-FROM alpine
-RUN apk add --no-cache bash
-RUN apk add --no-cache ca-certificates
+# Final stage
+FROM alpine:latest
 
-WORKDIR /bin/
+WORKDIR /app
 
-COPY --from=builder /bin/app .
+# Copy the binary and required files
+COPY --from=builder /app/bin/app .
+COPY --from=builder /app/database.yml .
+COPY --from=builder /app/migrations ./migrations
+COPY --from=builder /app/templates ./templates
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/locales ./locales
 
-# Uncomment to run the binary in "production" mode:
-# ENV GO_ENV=production
+# Install runtime dependencies
+RUN apk add --no-cache ca-certificates tzdata mysql-client
 
-# Bind the app to 0.0.0.0 so it can be seen from outside the container
-ENV ADDR=0.0.0.0
+# Set environment variables
+ENV GO_ENV=production
+ENV PORT=3000
 
+# Expose the application port
 EXPOSE 3000
 
-# Uncomment to run the migrations before running the binary:
-# CMD /bin/app migrate; /bin/app
-CMD exec /bin/app
+# Run migrations and start the app
+CMD ["./app"]
